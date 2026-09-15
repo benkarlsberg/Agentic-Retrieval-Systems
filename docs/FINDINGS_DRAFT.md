@@ -1,6 +1,6 @@
 # Findings Draft — Offline Fixture Runs Only
 
-> **LABEL: offline-fixture / DeterministicModel results**  
+> **Note:** offline-fixture / DeterministicModel results.  
 > These numbers come from the checked-in mini corpus (`fixtures/corpus/mini_wiki.jsonl`),
 > mini eval set (`fixtures/datasets/mini_eval.jsonl`, n=13), and the heuristic
 > `DeterministicModel`. They are **not** live LLM benchmark claims and must not be

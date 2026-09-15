@@ -2,8 +2,8 @@
 
 Reproducible research framework comparing **conventional RAG**, **bounded single-agent iterative retrieval**, and **role-separated multi-agent retrieval**.
 
-> **Default evaluation is offline-fixture** (`DeterministicModel` + checked-in mini corpus).  
-> Do not read fixture metrics as live LLM benchmark claims.
+> Default checked-in results use a deterministic offline model on a small fixture corpus.
+> Treat those numbers as harness validation, not large-scale LLM benchmarks.
 
 ## Research questions (short)
 
@@ -88,9 +88,6 @@ EM, token F1, lexical similarity, recall@k, MRR, citation P/R, abstention correc
 MIT. Fixture provenance: [fixtures/LICENSES.md](fixtures/LICENSES.md).
 
 
-## Research paper (arXiv)
+## Paper
 
-LaTeX source, figures, and PDF: [`papers/arxiv/`](papers/arxiv/).  
-Upload guide: [`papers/arxiv/README.md`](papers/arxiv/README.md).  
-Prebuilt PDF: [`papers/arxiv/main.pdf`](papers/arxiv/main.pdf).  
-Source zip for arXiv: [`papers/arxiv/arxiv-source.zip`](papers/arxiv/arxiv-source.zip).
+Draft paper (LaTeX + PDF): [`papers/arxiv/`](papers/arxiv/).
