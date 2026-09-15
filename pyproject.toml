@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-retrieval-systems"
+version = "0.1.0"
+description = "Research framework comparing conventional RAG, bounded single-agent, and multi-agent retrieval architectures"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ARS Research" }]
+keywords = ["rag", "retrieval", "agents", "multi-agent", "evaluation"]
+dependencies = [
+  "pydantic>=2.5",
+  "pyyaml>=6.0",
+  "numpy>=1.24",
+  "rank-bm25>=0.2.2",
+  "matplotlib>=3.7",
+  "jinja2>=3.1",
+  "httpx>=0.25",
+  "tiktoken>=0.5; python_version < '3.13'",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff>=0.1",
+  "mypy>=1.7",
+  "types-PyYAML>=6.0",
+]
+openai = ["openai>=1.6"]
+
+[project.scripts]
+ars-run = "ars.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ars = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_return_any = true
+warn_unused_ignores = true
+packages = ["ars"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["rank_bm25.*", "matplotlib.*", "numpy.*"]
+ignore_missing_imports = true

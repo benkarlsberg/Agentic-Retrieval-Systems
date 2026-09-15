@@ -1,0 +1,14 @@
+{
+  "experiment_id": "offline_fixture_compare",
+  "comparison_mode": "unconstrained",
+  "fixture_offline": true,
+  "n_examples": 13,
+  "architectures": [
+    "rag",
+    "single_agent",
+    "multi_agent"
+  ],
+  "output_dir": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627",
+  "config_path": "/workspace/Agentic-Retrieval-Systems/configs/experiments/offline_fixture_compare.yaml",
+  "note": "All metrics are from DeterministicModel + fixture corpus unless provider overridden."
+}

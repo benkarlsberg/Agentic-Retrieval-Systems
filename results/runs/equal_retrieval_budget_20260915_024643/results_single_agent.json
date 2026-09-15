@@ -1,0 +1,717 @@
+[
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "sh_001",
+    "architecture": "single_agent",
+    "question": "Who created Python?",
+    "answer": "Guido van Rossum",
+    "citations": [
+      {
+        "doc_id": "doc_python",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_turing",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Guido van Rossum",
+    "gold_doc_ids": [
+      "doc_python"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 1.5720630001396785,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 318,
+    "completion_tokens": 318,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 1.5720630001396785,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 636.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_sh_001.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "sh_002",
+    "architecture": "single_agent",
+    "question": "What is the height of Mount Everest?",
+    "answer": "8,849 meters",
+    "citations": [
+      {
+        "doc_id": "doc_everest",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_tokyo",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "8,849 meters",
+    "gold_doc_ids": [
+      "doc_everest"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.9102579999762384,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 316,
+    "completion_tokens": 317,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.9102579999762384,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 633.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_sh_002.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "sh_003",
+    "architecture": "single_agent",
+    "question": "At what temperature Celsius does water boil at standard pressure?",
+    "answer": "100",
+    "citations": [
+      {
+        "doc_id": "doc_water",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_js",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "100",
+    "gold_doc_ids": [
+      "doc_water"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.8470310001484904,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 337,
+    "completion_tokens": 337,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.8470310001484904,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 674.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_sh_003.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "sh_004",
+    "architecture": "single_agent",
+    "question": "What does DNA stand for?",
+    "answer": "Deoxyribonucleic acid",
+    "citations": [
+      {
+        "doc_id": "doc_dna",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_netherlands",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Deoxyribonucleic acid",
+    "gold_doc_ids": [
+      "doc_dna"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7965649999732705,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 324,
+    "completion_tokens": 324,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7965649999732705,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 648.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_sh_004.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "mh_001",
+    "architecture": "single_agent",
+    "question": "What is the capital of the country where the creator of Python was born?",
+    "answer": "Amsterdam",
+    "citations": [
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_netherlands",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Amsterdam",
+    "gold_doc_ids": [
+      "doc_guido",
+      "doc_netherlands"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.967681000020093,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 315,
+    "completion_tokens": 316,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.967681000020093,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 631.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_mh_001.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "mh_002",
+    "architecture": "single_agent",
+    "question": "Who founded the company that Brendan Eich was involved with at Mozilla leadership?",
+    "answer": "members of Netscape",
+    "citations": [
+      {
+        "doc_id": "doc_mozilla",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_eich",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_amazon",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "members of Netscape",
+    "gold_doc_ids": [
+      "doc_eich",
+      "doc_mozilla"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.8587950001128775,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 332,
+    "completion_tokens": 333,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.8587950001128775,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 665.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_mh_002.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "mh_003",
+    "architecture": "single_agent",
+    "question": "In what year was the Battle of Waterloo fought, ending Napoleon's wars?",
+    "answer": "1815",
+    "citations": [
+      {
+        "doc_id": "doc_waterloo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_einstein",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_mozilla",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "1815",
+    "gold_doc_ids": [
+      "doc_waterloo"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.8844709998356848,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 359,
+    "completion_tokens": 360,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.8844709998356848,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 719.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_mh_003.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "mp_001",
+    "architecture": "single_agent",
+    "question": "Compare: who created Python and who created JavaScript?",
+    "answer": "Guido van Rossum",
+    "citations": [
+      {
+        "doc_id": "doc_python",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_js",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_eich",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Guido van Rossum and Brendan Eich",
+    "gold_doc_ids": [
+      "doc_python",
+      "doc_js"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 1.132530999939263,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 335,
+    "completion_tokens": 336,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 0.6666666666666666,
+      "lexical_sim": 0.5,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 1.132530999939263,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 671.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_mp_001.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "mp_002",
+    "architecture": "single_agent",
+    "question": "What are the moons of Mars and what gas does photosynthesis produce?",
+    "answer": "Phobos and Deimos",
+    "citations": [
+      {
+        "doc_id": "doc_mars",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_photo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_unrelated",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Phobos and Deimos; oxygen",
+    "gold_doc_ids": [
+      "doc_mars",
+      "doc_photo"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.9581049998814706,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 318,
+    "completion_tokens": 318,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 0.8571428571428571,
+      "lexical_sim": 0.75,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.9581049998814706,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 636.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_mp_002.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "ua_001",
+    "architecture": "single_agent",
+    "question": "Who is the unicorn CEO of NASA's invisible Mars colony?",
+    "answer": "ABSTAIN: The retrieved context does not support an answer.",
+    "citations": [],
+    "gold_answer": null,
+    "gold_doc_ids": [],
+    "stop_reason": "abstain",
+    "abstained": true,
+    "latency_ms": 0.8477159999529249,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 327,
+    "completion_tokens": 328,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 0.0,
+      "f1": 0.0,
+      "lexical_sim": 0.0,
+      "abstention_correct": 1.0,
+      "latency_ms": 0.8477159999529249,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 655.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_ua_001.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "ua_002",
+    "architecture": "single_agent",
+    "question": "What is the capital of the invisible city of Atlantis under the Moon?",
+    "answer": "ABSTAIN: The retrieved context does not support an answer.",
+    "citations": [],
+    "gold_answer": null,
+    "gold_doc_ids": [],
+    "stop_reason": "abstain",
+    "abstained": true,
+    "latency_ms": 0.8781260000887414,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 325,
+    "completion_tokens": 326,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 0.0,
+      "f1": 0.0,
+      "lexical_sim": 0.0,
+      "abstention_correct": 1.0,
+      "latency_ms": 0.8781260000887414,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 651.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_ua_002.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "amb_001",
+    "architecture": "single_agent",
+    "question": "When was the relativity work published?",
+    "answer": "1905",
+    "citations": [
+      {
+        "doc_id": "doc_einstein",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_waterloo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "1905",
+    "gold_doc_ids": [
+      "doc_einstein"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.8189329998913308,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 332,
+    "completion_tokens": 333,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.8189329998913308,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 665.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_amb_001.jsonl"
+  },
+  {
+    "experiment_id": "equal_retrieval_budget_single_agent",
+    "example_id": "amb_002",
+    "architecture": "single_agent",
+    "question": "Who founded Amazon and when roughly?",
+    "answer": "Jeff Bezos",
+    "citations": [
+      {
+        "doc_id": "doc_amazon",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_bezos",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_turing",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Jeff Bezos",
+    "gold_doc_ids": [
+      "doc_amazon",
+      "doc_bezos"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7982469999205932,
+    "model_calls": 3,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 311,
+    "completion_tokens": 311,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7982469999205932,
+      "model_calls": 3.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 622.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643/traces/equal_retrieval_budget_single_agent_amb_002.jsonl"
+  }
+]

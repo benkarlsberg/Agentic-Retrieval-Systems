@@ -1,0 +1,11 @@
+experiment_id: abl_top_k_1
+ablation: top_k_1
+comparison_mode: unconstrained
+retrieval_mode: bm25
+top_k: 1
+architectures: [rag, single_agent, multi_agent]
+model: {provider: mock, model_name: deterministic-v1}
+budget: {max_steps: 8, max_model_calls: 12, max_docs: 8, max_tokens: 8000, max_retrieval_calls: 5, top_k: 1}
+tags: [ablation, top_k]
+corpus: fixtures/corpus/mini_wiki.jsonl
+dataset: fixtures/datasets/mini_eval.jsonl

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mh_001.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;What is the capital of the country where the creator of Python was born?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What is the capital of the country where the creator of Python was born?&quot;,
+  &quot;top_k&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;doc_guido&quot;,
+    &quot;doc_netherlands&quot;,
+    &quot;doc_distractor_rome&quot;,
+    &quot;doc_tokyo&quot;,
+    &quot;doc_london&quot;
+  ],
+  &quot;scores&quot;: [
+    12.143865581096573,
+    10.289189743664739,
+    8.97558086373489,
+    7.670136338428179,
+    7.255416706599672
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 874,
+  &quot;n_docs&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Amsterdam&quot;,
+  &quot;citations&quot;: [
+    {
+      &quot;doc_id&quot;: &quot;doc_guido&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_netherlands&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_distractor_rome&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    }
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 5,
+    &quot;tokens&quot;: 279,
+    &quot;unique_docs&quot;: 5,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Amsterdam&quot;
+}</pre></div>
+</body></html>

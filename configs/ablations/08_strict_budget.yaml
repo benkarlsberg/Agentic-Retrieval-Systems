@@ -1,0 +1,10 @@
+experiment_id: abl_strict_budget
+ablation: strict_budget
+comparison_mode: equal_retrieval
+retrieval_mode: bm25
+architectures: [rag, single_agent, multi_agent]
+model: {provider: mock, model_name: deterministic-v1}
+budget: {max_steps: 3, max_model_calls: 4, max_docs: 6, max_tokens: 2000, max_retrieval_calls: 2, top_k: 3}
+tags: [ablation, strict_budget]
+corpus: fixtures/corpus/mini_wiki.jsonl
+dataset: fixtures/datasets/mini_eval.jsonl

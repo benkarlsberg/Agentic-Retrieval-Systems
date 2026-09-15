@@ -1,0 +1,19 @@
+experiment_id: equal_token_budget
+comparison_mode: equal_token
+retrieval_mode: bm25
+top_k: 5
+seed: 42
+corpus: fixtures/corpus/mini_wiki.jsonl
+dataset: fixtures/datasets/mini_eval.jsonl
+architectures: [rag, single_agent, multi_agent]
+model:
+  provider: mock
+  model_name: deterministic-v1
+budget:
+  max_steps: 8
+  max_model_calls: 10
+  max_docs: 20
+  max_tokens: 4000
+  max_retrieval_calls: 5
+  top_k: 5
+tags: [offline, equal_token]

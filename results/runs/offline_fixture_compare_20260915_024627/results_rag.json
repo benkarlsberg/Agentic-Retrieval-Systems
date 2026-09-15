@@ -1,0 +1,717 @@
+[
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "sh_001",
+    "architecture": "rag",
+    "question": "Who created Python?",
+    "answer": "Guido van Rossum",
+    "citations": [
+      {
+        "doc_id": "doc_python",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_turing",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Guido van Rossum",
+    "gold_doc_ids": [
+      "doc_python"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 1.8597450000470417,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 147,
+    "completion_tokens": 147,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 1.8597450000470417,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 294.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_sh_001.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "sh_002",
+    "architecture": "rag",
+    "question": "What is the height of Mount Everest?",
+    "answer": "8,849 meters",
+    "citations": [
+      {
+        "doc_id": "doc_everest",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_tokyo",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "8,849 meters",
+    "gold_doc_ids": [
+      "doc_everest"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.8997139998427883,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 144,
+    "completion_tokens": 145,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.8997139998427883,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 289.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_sh_002.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "sh_003",
+    "architecture": "rag",
+    "question": "At what temperature Celsius does water boil at standard pressure?",
+    "answer": "100",
+    "citations": [
+      {
+        "doc_id": "doc_water",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_js",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "100",
+    "gold_doc_ids": [
+      "doc_water"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7784599999922648,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 149,
+    "completion_tokens": 150,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7784599999922648,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 299.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_sh_003.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "sh_004",
+    "architecture": "rag",
+    "question": "What does DNA stand for?",
+    "answer": "Deoxyribonucleic acid",
+    "citations": [
+      {
+        "doc_id": "doc_dna",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_netherlands",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Deoxyribonucleic acid",
+    "gold_doc_ids": [
+      "doc_dna"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.73126899997078,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 150,
+    "completion_tokens": 151,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.73126899997078,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 301.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_sh_004.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "mh_001",
+    "architecture": "rag",
+    "question": "What is the capital of the country where the creator of Python was born?",
+    "answer": "Amsterdam",
+    "citations": [
+      {
+        "doc_id": "doc_guido",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_netherlands",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Amsterdam",
+    "gold_doc_ids": [
+      "doc_guido",
+      "doc_netherlands"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7736039999599598,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 139,
+    "completion_tokens": 140,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7736039999599598,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 279.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mh_001.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "mh_002",
+    "architecture": "rag",
+    "question": "Who founded the company that Brendan Eich was involved with at Mozilla leadership?",
+    "answer": "members of Netscape",
+    "citations": [
+      {
+        "doc_id": "doc_mozilla",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_eich",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_amazon",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "members of Netscape",
+    "gold_doc_ids": [
+      "doc_eich",
+      "doc_mozilla"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7280560000708647,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 146,
+    "completion_tokens": 147,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7280560000708647,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 293.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mh_002.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "mh_003",
+    "architecture": "rag",
+    "question": "In what year was the Battle of Waterloo fought, ending Napoleon's wars?",
+    "answer": "1815",
+    "citations": [
+      {
+        "doc_id": "doc_waterloo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_einstein",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_mozilla",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "1815",
+    "gold_doc_ids": [
+      "doc_waterloo"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.5816350001168757,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 161,
+    "completion_tokens": 161,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.5816350001168757,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 322.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mh_003.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "mp_001",
+    "architecture": "rag",
+    "question": "Compare: who created Python and who created JavaScript?",
+    "answer": "Guido van Rossum",
+    "citations": [
+      {
+        "doc_id": "doc_python",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_js",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_eich",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Guido van Rossum and Brendan Eich",
+    "gold_doc_ids": [
+      "doc_python",
+      "doc_js"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.5295240000577905,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 151,
+    "completion_tokens": 151,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 0.6666666666666666,
+      "lexical_sim": 0.5,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.5295240000577905,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 302.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mp_001.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "mp_002",
+    "architecture": "rag",
+    "question": "What are the moons of Mars and what gas does photosynthesis produce?",
+    "answer": "Phobos and Deimos",
+    "citations": [
+      {
+        "doc_id": "doc_mars",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_photo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_unrelated",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Phobos and Deimos; oxygen",
+    "gold_doc_ids": [
+      "doc_mars",
+      "doc_photo"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.598579999859794,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 141,
+    "completion_tokens": 141,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 0.8571428571428571,
+      "lexical_sim": 0.75,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.598579999859794,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 282.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_mp_002.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "ua_001",
+    "architecture": "rag",
+    "question": "Who is the unicorn CEO of NASA's invisible Mars colony?",
+    "answer": "ABSTAIN: The retrieved context does not support an answer.",
+    "citations": [],
+    "gold_answer": null,
+    "gold_doc_ids": [],
+    "stop_reason": "abstain",
+    "abstained": true,
+    "latency_ms": 0.5116690001614188,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 146,
+    "completion_tokens": 147,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 0.0,
+      "f1": 0.0,
+      "lexical_sim": 0.0,
+      "abstention_correct": 1.0,
+      "latency_ms": 0.5116690001614188,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 293.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_ua_001.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "ua_002",
+    "architecture": "rag",
+    "question": "What is the capital of the invisible city of Atlantis under the Moon?",
+    "answer": "ABSTAIN: The retrieved context does not support an answer.",
+    "citations": [],
+    "gold_answer": null,
+    "gold_doc_ids": [],
+    "stop_reason": "abstain",
+    "abstained": true,
+    "latency_ms": 0.5399960000431747,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 143,
+    "completion_tokens": 144,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 0.0,
+      "f1": 0.0,
+      "lexical_sim": 0.0,
+      "abstention_correct": 1.0,
+      "latency_ms": 0.5399960000431747,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 287.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_ua_002.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "amb_001",
+    "architecture": "rag",
+    "question": "When was the relativity work published?",
+    "answer": "1905",
+    "citations": [
+      {
+        "doc_id": "doc_einstein",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_waterloo",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_distractor_rome",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "1905",
+    "gold_doc_ids": [
+      "doc_einstein"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.9093969999867113,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 152,
+    "completion_tokens": 152,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.9093969999867113,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 304.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_amb_001.jsonl"
+  },
+  {
+    "experiment_id": "offline_fixture_compare_rag",
+    "example_id": "amb_002",
+    "architecture": "rag",
+    "question": "Who founded Amazon and when roughly?",
+    "answer": "Jeff Bezos",
+    "citations": [
+      {
+        "doc_id": "doc_amazon",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_bezos",
+        "span": null,
+        "confidence": null
+      },
+      {
+        "doc_id": "doc_turing",
+        "span": null,
+        "confidence": null
+      }
+    ],
+    "gold_answer": "Jeff Bezos",
+    "gold_doc_ids": [
+      "doc_amazon",
+      "doc_bezos"
+    ],
+    "stop_reason": "completed",
+    "abstained": false,
+    "latency_ms": 0.7118369999261631,
+    "model_calls": 1,
+    "retrieval_calls": 1,
+    "docs_retrieved": 5,
+    "unique_docs": 5,
+    "duplicate_docs": 0,
+    "prompt_tokens": 141,
+    "completion_tokens": 141,
+    "estimated_cost_usd": 0.0,
+    "metrics": {
+      "em": 1.0,
+      "f1": 1.0,
+      "lexical_sim": 1.0,
+      "abstention_correct": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "recall@k": 1.0,
+      "mrr": 1.0,
+      "latency_ms": 0.7118369999261631,
+      "model_calls": 1.0,
+      "retrieval_calls": 1.0,
+      "unique_docs": 5.0,
+      "duplicate_docs": 0.0,
+      "tokens": 282.0,
+      "cost_usd": 0.0
+    },
+    "error": null,
+    "trace_path": "/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_rag_amb_002.jsonl"
+  }
+]

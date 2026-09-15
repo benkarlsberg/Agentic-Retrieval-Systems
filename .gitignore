@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+*.log
+.DS_Store
+.coverage
+htmlcov/
+
+# Ignore ad-hoc local runs, but keep the checked-in offline fixture demonstration
+results/runs/*
+!results/runs/.gitkeep
+!results/runs/offline_fixture_compare_20260915_024627/
+!results/runs/equal_retrieval_budget_20260915_024643/
+!results/runs/latest
+
+results/traces/*
+!results/traces/.gitkeep
+
+# Keep published offline plots/tables
+# (do not ignore results/plots or results/tables contents)

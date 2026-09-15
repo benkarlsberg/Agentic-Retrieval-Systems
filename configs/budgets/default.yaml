@@ -1,0 +1,6 @@
+max_steps: 8
+max_model_calls: 10
+max_docs: 20
+max_tokens: 8000
+max_retrieval_calls: 5
+top_k: 5

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_single_agent_amb_002.jsonl events=11</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Who founded Amazon and when roughly?&quot;,
+  &quot;architecture&quot;: &quot;single_agent&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">step_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;step&quot;: 1
+}</pre></div>
+<div class="event"><div><span class="etype">budget_check</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;steps&quot;: 1,
+  &quot;model_calls&quot;: 0,
+  &quot;retrieval_calls&quot;: 0,
+  &quot;docs&quot;: 0,
+  &quot;tokens&quot;: 0,
+  &quot;unique_docs&quot;: 0,
+  &quot;duplicate_docs&quot;: 0
+}</pre></div>
+<div class="event"><div><span class="etype">routing</span> step=0 <span class="role">single</span></div><pre>{
+  &quot;raw&quot;: &quot;ACTION: retrieve\nQUERY: Who founded Amazon and when roughly?&quot;,
+  &quot;action&quot;: {
+    &quot;type&quot;: &quot;retrieve&quot;,
+    &quot;query&quot;: &quot;Who founded Amazon and when roughly?&quot;,
+    &quot;reason&quot;: null
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;n_docs&quot;: 5,
+  &quot;query&quot;: &quot;Who founded Amazon and when roughly?&quot;,
+  &quot;new_ids&quot;: [
+    &quot;doc_amazon&quot;,
+    &quot;doc_bezos&quot;,
+    &quot;doc_turing&quot;,
+    &quot;doc_eich&quot;,
+    &quot;doc_mozilla&quot;
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">step_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;step&quot;: 2
+}</pre></div>
+<div class="event"><div><span class="etype">budget_check</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;steps&quot;: 2,
+  &quot;model_calls&quot;: 1,
+  &quot;retrieval_calls&quot;: 1,
+  &quot;docs&quot;: 5,
+  &quot;tokens&quot;: 56,
+  &quot;unique_docs&quot;: 5,
+  &quot;duplicate_docs&quot;: 0
+}</pre></div>
+<div class="event"><div><span class="etype">routing</span> step=0 <span class="role">single</span></div><pre>{
+  &quot;raw&quot;: &quot;ACTION: stop\nREASON: enough context to answer&quot;,
+  &quot;action&quot;: {
+    &quot;type&quot;: &quot;stop&quot;,
+    &quot;query&quot;: null,
+    &quot;reason&quot;: &quot;enough context to answer&quot;
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Jeff Bezos&quot;,
+  &quot;citations&quot;: [
+    {
+      &quot;doc_id&quot;: &quot;doc_amazon&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_bezos&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_turing&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    }
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 2,
+    &quot;model_calls&quot;: 3,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 5,
+    &quot;tokens&quot;: 622,
+    &quot;unique_docs&quot;: 5,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Jeff Bezos&quot;
+}</pre></div>
+</body></html>

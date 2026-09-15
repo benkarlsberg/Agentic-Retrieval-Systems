@@ -1,0 +1,4 @@
+provider: mock
+model_name: deterministic-v1
+temperature: 0.0
+max_tokens: 512

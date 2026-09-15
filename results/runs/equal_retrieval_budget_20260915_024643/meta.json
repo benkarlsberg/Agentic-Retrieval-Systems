@@ -1,0 +1,14 @@
+{
+  "experiment_id": "equal_retrieval_budget",
+  "comparison_mode": "equal_retrieval",
+  "fixture_offline": true,
+  "n_examples": 13,
+  "architectures": [
+    "rag",
+    "single_agent",
+    "multi_agent"
+  ],
+  "output_dir": "/workspace/Agentic-Retrieval-Systems/results/runs/equal_retrieval_budget_20260915_024643",
+  "config_path": "/workspace/Agentic-Retrieval-Systems/configs/experiments/equal_retrieval.yaml",
+  "note": "All metrics are from DeterministicModel + fixture corpus unless provider overridden."
+}

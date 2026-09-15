@@ -1,0 +1,10 @@
+experiment_id: abl_single_retriever_role
+ablation: single_retriever_role
+comparison_mode: unconstrained
+retrieval_mode: bm25
+architectures: [multi_agent]
+model: {provider: mock, model_name: deterministic-v1}
+budget: {max_steps: 8, max_model_calls: 12, max_docs: 20, max_tokens: 8000, max_retrieval_calls: 5, top_k: 5}
+tags: [ablation, single_retriever_role]
+corpus: fixtures/corpus/mini_wiki.jsonl
+dataset: fixtures/datasets/mini_eval.jsonl

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_multi_agent_sh_004.jsonl events=14</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;What does DNA stand for?&quot;,
+  &quot;architecture&quot;: &quot;multi_agent&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;content&quot;: &quot;SUBQUESTIONS:\n1. Direct fact lookup for the question.\nSTRATEGY: single-hop&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">subquestion</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;plan&quot;: &quot;SUBQUESTIONS:\n1. Direct fact lookup for the question.\nSTRATEGY: single-hop&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;from&quot;: &quot;planner&quot;,
+  &quot;to&quot;: &quot;retrievers&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What does DNA stand for?&quot;,
+  &quot;specialty&quot;: &quot;fact&quot;,
+  &quot;top_k&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;doc_dna&quot;,
+    &quot;doc_netherlands&quot;,
+    &quot;doc_distractor_rome&quot;,
+    &quot;doc_python&quot;,
+    &quot;doc_guido&quot;
+  ],
+  &quot;scores&quot;: [
+    6.931882670389848,
+    1.9832859532680098,
+    1.8851514619945164,
+    0.0,
+    0.0
+  ],
+  &quot;specialty&quot;: &quot;fact&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">critic</span></div><pre>{
+  &quot;content&quot;: &quot;VERDICT: insufficient\nREASON: Context too thin; need another retrieval.\nACTION: retrieve&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What does DNA stand for? Direct fact lookup for the question. evidence facts&quot;,
+  &quot;specialty&quot;: &quot;evidence&quot;,
+  &quot;top_k&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;doc_waterloo&quot;,
+    &quot;doc_rhine&quot;,
+    &quot;doc_london&quot;,
+    &quot;doc_tokyo&quot;,
+    &quot;doc_photo&quot;
+  ],
+  &quot;scores&quot;: [
+    1.2284210835590774,
+    1.225357689335738,
+    1.1019475571172153,
+    1.05361652391032,
+    0.9441140205519547
+  ],
+  &quot;specialty&quot;: &quot;evidence&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">critic</span></div><pre>{
+  &quot;content&quot;: &quot;VERDICT: insufficient\nREASON: Context too thin; need another retrieval.\nACTION: retrieve&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Deoxyribonucleic acid&quot;,
+  &quot;citations&quot;: [
+    {
+      &quot;doc_id&quot;: &quot;doc_dna&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_netherlands&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_distractor_rome&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    }
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">metric</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;coordination_messages&quot;: 6
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 5,
+    &quot;model_calls&quot;: 4,
+    &quot;retrieval_calls&quot;: 2,
+    &quot;docs&quot;: 10,
+    &quot;tokens&quot;: 1424,
+    &quot;unique_docs&quot;: 10,
+    &quot;duplicate_docs&quot;: 0
+  },
+  &quot;coordination_messages&quot;: 6
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Deoxyribonucleic acid&quot;
+}</pre></div>
+</body></html>

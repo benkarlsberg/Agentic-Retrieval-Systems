@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/offline_fixture_compare_20260915_024627/traces/offline_fixture_compare_multi_agent_mp_002.jsonl events=14</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;What are the moons of Mars and what gas does photosynthesis produce?&quot;,
+  &quot;architecture&quot;: &quot;multi_agent&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;content&quot;: &quot;SUBQUESTIONS:\n1. Direct fact lookup for the question.\nSTRATEGY: single-hop&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">subquestion</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;plan&quot;: &quot;SUBQUESTIONS:\n1. Direct fact lookup for the question.\nSTRATEGY: single-hop&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">planner</span></div><pre>{
+  &quot;from&quot;: &quot;planner&quot;,
+  &quot;to&quot;: &quot;retrievers&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What are the moons of Mars and what gas does photosynthesis produce?&quot;,
+  &quot;specialty&quot;: &quot;fact&quot;,
+  &quot;top_k&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;doc_mars&quot;,
+    &quot;doc_photo&quot;,
+    &quot;doc_unrelated&quot;,
+    &quot;doc_distractor_ai&quot;,
+    &quot;doc_distractor_rome&quot;
+  ],
+  &quot;scores&quot;: [
+    13.058482979293567,
+    8.660458561269277,
+    6.10147967042087,
+    2.8944064513242544,
+    2.834017601292198
+  ],
+  &quot;specialty&quot;: &quot;fact&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">critic</span></div><pre>{
+  &quot;content&quot;: &quot;VERDICT: insufficient\nREASON: Context too thin; need another retrieval.\nACTION: retrieve&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What are the moons of Mars and what gas does photosynthesis produce? Direct fact lookup for the question. evidence facts&quot;,
+  &quot;specialty&quot;: &quot;evidence&quot;,
+  &quot;top_k&quot;: 5
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;doc_netherlands&quot;,
+    &quot;doc_dna&quot;,
+    &quot;doc_london&quot;,
+    &quot;doc_waterloo&quot;,
+    &quot;doc_greatwall&quot;
+  ],
+  &quot;scores&quot;: [
+    4.902324363341745,
+    3.962737521865921,
+    3.5696696607056726,
+    3.559914160518143,
+    3.3338411628812543
+  ],
+  &quot;specialty&quot;: &quot;evidence&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">agent_message</span> step=0 <span class="role">critic</span></div><pre>{
+  &quot;content&quot;: &quot;VERDICT: insufficient\nREASON: Context too thin; need another retrieval.\nACTION: retrieve&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Phobos and Deimos&quot;,
+  &quot;citations&quot;: [
+    {
+      &quot;doc_id&quot;: &quot;doc_mars&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_photo&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    },
+    {
+      &quot;doc_id&quot;: &quot;doc_unrelated&quot;,
+      &quot;span&quot;: null,
+      &quot;confidence&quot;: null
+    }
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">metric</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;coordination_messages&quot;: 6
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 5,
+    &quot;model_calls&quot;: 4,
+    &quot;retrieval_calls&quot;: 2,
+    &quot;docs&quot;: 10,
+    &quot;tokens&quot;: 1418,
+    &quot;unique_docs&quot;: 10,
+    &quot;duplicate_docs&quot;: 0
+  },
+  &quot;coordination_messages&quot;: 6
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Phobos and Deimos&quot;
+}</pre></div>
+</body></html>

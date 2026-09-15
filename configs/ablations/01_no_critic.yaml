@@ -1,0 +1,12 @@
+# Ablation 1: Multi-agent without critic (synthesize after retrieval only)
+experiment_id: abl_no_critic
+ablation: no_critic
+comparison_mode: unconstrained
+retrieval_mode: bm25
+architectures: [multi_agent]
+model: {provider: mock, model_name: deterministic-v1}
+budget: {max_steps: 8, max_model_calls: 12, max_docs: 20, max_tokens: 8000, max_retrieval_calls: 5, top_k: 5}
+tags: [ablation, no_critic]
+corpus: fixtures/corpus/mini_wiki.jsonl
+dataset: fixtures/datasets/mini_eval.jsonl
+notes: "Framework flag — multi_agent still runs critic in v0.1; config reserved for wiring skip_critic=true"
