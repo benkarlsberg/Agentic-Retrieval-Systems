@@ -68,3 +68,36 @@ def plot_budget_tradeoff(
     fig.savefig(path, dpi=120)
     plt.close(fig)
     return path
+
+
+def plot_pareto_scatter(
+    rows: list[dict[str, Any]],
+    path: Path,
+    x_key: str,
+    y_key: str,
+    title: str | None = None,
+    group_key: str = "architecture",
+) -> Path | None:
+    """Scatter quality (y) vs cost (x); useful for Pareto-style inspection."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    by_g: dict[str, list[tuple[float, float]]] = {}
+    for r in rows:
+        g = str(r.get(group_key, "?"))
+        by_g.setdefault(g, []).append((float(r.get(x_key, 0) or 0), float(r.get(y_key, 0) or 0)))
+    for g, pts in by_g.items():
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        ax.scatter(xs, ys, label=g, alpha=0.65, s=28)
+    ax.set_xlabel(x_key)
+    ax.set_ylabel(y_key)
+    ax.set_title(title or f"{y_key} vs {x_key}")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
+    return path

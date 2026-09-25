@@ -14,9 +14,10 @@ from ars.corpora.loader import load_corpus
 from ars.datasets.loader import load_dataset
 from ars.evaluation.runner import evaluate_results
 from ars.models.cost import CostEstimator
+from ars.models.mock import DeterministicModel
 from ars.models.openai_compat import maybe_make_client
 from ars.reporting.error_analysis import write_error_analysis
-from ars.reporting.plots import plot_budget_tradeoff, plot_metric_bars
+from ars.reporting.plots import plot_budget_tradeoff, plot_metric_bars, plot_pareto_scatter
 from ars.reporting.tables import results_to_rows, write_comparison_table
 from ars.reporting.trace_viewer import write_trace_html, write_trace_json_bundle
 from ars.retrieval.factory import make_retriever
@@ -132,6 +133,9 @@ def run_from_config(config_path: Path, output_dir: Path | None = None) -> dict[s
         results, summary = evaluate_results(results, examples, retrieved_map)
         summary.comparison_mode = comparison_mode
         summary.config = run_cfg.model_dump()
+        summary.fixture_offline = isinstance(model, DeterministicModel)
+        if not summary.fixture_offline:
+            summary.notes = f"Live model run: provider={model_settings.provider}, model={model_settings.model_name}."
         all_summaries.append(summary)
         per_arch_results[arch.value] = results
         rows = results_to_rows(results)
@@ -146,8 +150,10 @@ def run_from_config(config_path: Path, output_dir: Path | None = None) -> dict[s
 
     write_comparison_table(all_summaries, out / "comparison.csv")
     write_comparison_table(all_summaries, out / "comparison.json")
-    plot_metric_bars(all_summaries, "f1", out / "plot_f1.png", title="Token F1 (offline fixture)")
-    plot_metric_bars(all_summaries, "em", out / "plot_em.png", title="Exact Match (offline fixture)")
+    is_offline = isinstance(model, DeterministicModel)
+    title_suffix = "offline fixture" if is_offline else f"live ({model_settings.model_name})"
+    plot_metric_bars(all_summaries, "f1", out / "plot_f1.png", title=f"Token F1 ({title_suffix})")
+    plot_metric_bars(all_summaries, "em", out / "plot_em.png", title=f"Exact Match ({title_suffix})")
     plot_budget_tradeoff(all_rows, out / "plot_tradeoff.png")
 
     # Trace bundle + sample HTML
@@ -156,15 +162,22 @@ def run_from_config(config_path: Path, output_dir: Path | None = None) -> dict[s
     if trace_files:
         write_trace_html(trace_files[0], out / "sample_trace.html")
 
+    is_offline = isinstance(model, DeterministicModel)
     meta = {
         "experiment_id": experiment_id,
         "comparison_mode": comparison_mode,
-        "fixture_offline": True,
+        "fixture_offline": is_offline,
+        "model_provider": model_settings.provider,
+        "model_name": model_settings.model_name,
         "n_examples": len(examples),
         "architectures": [a.value for a in architectures],
         "output_dir": str(out),
         "config_path": str(config_path),
-        "note": "All metrics are from DeterministicModel + fixture corpus unless provider overridden.",
+        "note": (
+            "Offline DeterministicModel + fixture corpus."
+            if is_offline
+            else f"Live run with {model_settings.provider}/{model_settings.model_name} on fixture corpus/dataset."
+        ),
     }
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 

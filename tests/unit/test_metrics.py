@@ -36,3 +36,13 @@ def test_bootstrap():
     assert ci.low <= ci.mean <= ci.high
     pci = paired_bootstrap_ci([0.5, 0.6], [0.4, 0.5], n_bootstrap=200)
     assert pci.mean > 0
+
+
+def test_soft_em_and_contains_gold():
+    from ars.evaluation.metrics import contains_gold, soft_em, soft_f1
+
+    assert soft_em("Amsterdam", "Amsterdam") == 1.0
+    assert soft_em("The answer is Amsterdam", "Amsterdam") == 0.0  # not strict equality
+    assert contains_gold("The answer is Amsterdam", "Amsterdam") == 1.0
+    assert contains_gold("Amsterdam", "Amsterdam, Netherlands") == 1.0  # short pred in gold
+    assert soft_f1("The capital is Amsterdam", "Amsterdam") >= 0.5

@@ -1,0 +1,16 @@
+{
+  "experiment_id": "live_gpt4o_mini_compare",
+  "comparison_mode": "unconstrained",
+  "fixture_offline": false,
+  "model_provider": "openai",
+  "model_name": "gpt-4o-mini",
+  "n_examples": 13,
+  "architectures": [
+    "rag",
+    "single_agent",
+    "multi_agent"
+  ],
+  "output_dir": "/workspace/Agentic-Retrieval-Systems/results/runs/live_gpt4o_mini_compare_20260915_035757",
+  "config_path": "/workspace/Agentic-Retrieval-Systems/configs/experiments/live_gpt4o_mini_compare.yaml",
+  "note": "Live run with openai/gpt-4o-mini on fixture corpus/dataset."
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_unconstrained_20260915_042424/traces/live_hotpot150_unconstrained_single_agent_5ab2b2a7554299295394681d.jsonl events=11</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Have filmmakers Brent Hodge and Ayoub Qanir both received awards for their work?&quot;,
+  &quot;architecture&quot;: &quot;single_agent&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">step_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;step&quot;: 1
+}</pre></div>
+<div class="event"><div><span class="etype">budget_check</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;steps&quot;: 1,
+  &quot;model_calls&quot;: 0,
+  &quot;retrieval_calls&quot;: 0,
+  &quot;docs&quot;: 0,
+  &quot;tokens&quot;: 0,
+  &quot;unique_docs&quot;: 0,
+  &quot;duplicate_docs&quot;: 0
+}</pre></div>
+<div class="event"><div><span class="etype">routing</span> step=0 <span class="role">single</span></div><pre>{
+  &quot;raw&quot;: &quot;ACTION: retrieve  \nQUERY: Have filmmakers Brent Hodge and Ayoub Qanir both received awards for their work?&quot;,
+  &quot;action&quot;: {
+    &quot;type&quot;: &quot;retrieve&quot;,
+    &quot;query&quot;: &quot;Have filmmakers Brent Hodge and Ayoub Qanir both received awards for their work?&quot;,
+    &quot;reason&quot;: null
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;n_docs&quot;: 5,
+  &quot;query&quot;: &quot;Have filmmakers Brent Hodge and Ayoub Qanir both received awards for their work?&quot;,
+  &quot;new_ids&quot;: [
+    &quot;Brent Hodge::s4&quot;,
+    &quot;Ayoub Qanir::s0&quot;,
+    &quot;Ayoub Qanir::s3&quot;,
+    &quot;Ayoub Qanir::s1&quot;,
+    &quot;Brent Hodge::s2&quot;
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">step_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;step&quot;: 2
+}</pre></div>
+<div class="event"><div><span class="etype">budget_check</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;steps&quot;: 2,
+  &quot;model_calls&quot;: 1,
+  &quot;retrieval_calls&quot;: 1,
+  &quot;docs&quot;: 5,
+  &quot;tokens&quot;: 94,
+  &quot;unique_docs&quot;: 5,
+  &quot;duplicate_docs&quot;: 0
+}</pre></div>
+<div class="event"><div><span class="etype">routing</span> step=0 <span class="role">single</span></div><pre>{
+  &quot;raw&quot;: &quot;retrieve&quot;,
+  &quot;action&quot;: {
+    &quot;type&quot;: &quot;stop&quot;,
+    &quot;query&quot;: null,
+    &quot;reason&quot;: null
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Yes, both filmmakers Brent Hodge and Ayoub Qanir have received awards for their work. Brent Hodge was nominated for two Shorty Awards in 2014 and 2015 for his projects \&quot;The Beetle Roadtrip Sessions\&quot; and \&quot;A Brony Tale\&quot; (Brent Hodge::s4). Ayoub Qanir is noted for his award-winning experimental film series \&quot;Human After All\&quot; (Ayoub Qanir::s0).&quot;,
+  &quot;citations&quot;: []
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 2,
+    &quot;model_calls&quot;: 3,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 5,
+    &quot;tokens&quot;: 828,
+    &quot;unique_docs&quot;: 5,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Yes, both filmmakers Brent Hodge and Ayoub Qanir have received awards for their work. Brent Hodge was nominated for two Shorty Awards in 2014 and 2015 for his projects \&quot;The Beetle Roadtrip Sessions\&quot; and \&quot;A Brony Tale\&quot; (Brent Hodge::s4). Ayoub Qanir is noted for his award-winning experimental film series \&quot;Human After All\&quot; (Ayoub Qanir::s0).&quot;
+}</pre></div>
+</body></html>

@@ -1,4 +1,4 @@
-"""Evaluation metrics: EM, token F1, recall@k, MRR, citations, abstention, etc."""
+"""Evaluation metrics: EM, token F1, soft EM, contains-gold, recall@k, MRR, citations, abstention."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from ars.schema import Example, ExampleResult
 
 
 def normalize_answer(s: str | None) -> str:
+    """HotpotQA-style answer normalization (lower, strip articles/punct/whitespace)."""
     if s is None:
         return ""
     s = s.lower().strip()
@@ -40,6 +41,7 @@ def token_f1(pred: str, gold: str) -> float:
 
 
 def exact_match(pred: str, gold: str, aliases: list[str] | None = None) -> float:
+    """Legacy EM used by fixture tests: normalized equality OR either string contains the other."""
     np_ = normalize_answer(pred)
     candidates = [gold] + (aliases or [])
     for c in candidates:
@@ -49,6 +51,55 @@ def exact_match(pred: str, gold: str, aliases: list[str] | None = None) -> float
         if np_ == nc or nc in np_ or np_ in nc:
             return 1.0
     return 0.0
+
+
+def soft_em(pred: str, gold: str, aliases: list[str] | None = None) -> float:
+    """Normalized exact match only (no substring credit). Paraphrase-stricter than legacy EM."""
+    np_ = normalize_answer(pred)
+    if not np_:
+        return 0.0
+    for c in [gold] + (aliases or []):
+        nc = normalize_answer(c)
+        if nc and np_ == nc:
+            return 1.0
+    return 0.0
+
+
+def contains_gold(pred: str, gold: str, aliases: list[str] | None = None) -> float:
+    """1.0 if pred contains normalized gold (or vice versa for short answers ≤5 tokens)."""
+    np_ = normalize_answer(pred)
+    if not np_:
+        return 0.0
+    for c in [gold] + (aliases or []):
+        nc = normalize_answer(c)
+        if not nc:
+            continue
+        g_toks = nc.split()
+        p_toks = np_.split()
+        if nc in np_ or np_ in nc:
+            # Vice-versa containment only when the shorter side is a short answer
+            if nc in np_:
+                return 1.0
+            if np_ in nc and len(p_toks) <= 5:
+                return 1.0
+            if len(g_toks) <= 5 and (nc in np_ or np_ in nc):
+                return 1.0
+        # token-boundary short gold contained as subsequence phrase
+        if len(g_toks) <= 5 and nc in np_:
+            return 1.0
+    return 0.0
+
+
+def soft_f1(pred: str, gold: str, aliases: list[str] | None = None) -> float:
+    """Paraphrase-friendly F1: max token-F1 over gold+aliases, floored by contains_gold credit."""
+    scores = [token_f1(pred, gold)]
+    for a in aliases or []:
+        scores.append(token_f1(pred, a))
+    base = max(scores) if scores else 0.0
+    if contains_gold(pred, gold, aliases) >= 1.0:
+        # Short-answer containment gets at least half credit when EM fails
+        return max(base, 0.5)
+    return base
 
 
 def lexical_similarity(pred: str, gold: str) -> float:
@@ -116,10 +167,16 @@ def compute_example_metrics(
     if example.is_answerable and gold:
         metrics["em"] = exact_match(pred, gold, example.aliases)
         metrics["f1"] = token_f1(pred, gold)
+        metrics["soft_em"] = soft_em(pred, gold, example.aliases)
+        metrics["contains_gold"] = contains_gold(pred, gold, example.aliases)
+        metrics["soft_f1"] = soft_f1(pred, gold, example.aliases)
         metrics["lexical_sim"] = lexical_similarity(pred, gold)
     else:
         metrics["em"] = 0.0
         metrics["f1"] = 0.0
+        metrics["soft_em"] = 0.0
+        metrics["contains_gold"] = 0.0
+        metrics["soft_f1"] = 0.0
         metrics["lexical_sim"] = 0.0
 
     metrics["abstention_correct"] = abstention_correctness(

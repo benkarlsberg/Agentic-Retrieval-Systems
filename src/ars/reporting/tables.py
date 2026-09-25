@@ -37,7 +37,7 @@ def write_comparison_table(
     metrics: list[str] | None = None,
 ) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    metrics = metrics or ["em", "f1", "lexical_sim", "abstention_correct", "recall@k", "mrr", "latency_ms", "model_calls", "retrieval_calls", "tokens"]
+    metrics = metrics or ["em", "f1", "soft_em", "contains_gold", "soft_f1", "lexical_sim", "abstention_correct", "recall@k", "mrr", "latency_ms", "model_calls", "retrieval_calls", "tokens"]
     rows: list[dict[str, Any]] = []
     for s in summaries:
         row: dict[str, Any] = {

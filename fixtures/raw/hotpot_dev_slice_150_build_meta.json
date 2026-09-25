@@ -1,0 +1,24 @@
+{
+  "built_at_utc": "2026-09-15T04:22:49.246301+00:00",
+  "seed": 42,
+  "source_file": "fixtures/raw/hotpot_dev_distractor_v1.json",
+  "source_sha256": "e3da074df24e8369009918aa5cdbdd254dadcde4c63f7569d36afd6f2268caa8",
+  "source_bytes": 61065698,
+  "dataset_id": "hotpot_qa/distractor/validation (hotpot_dev_distractor_v1.json)",
+  "download_url": "https://huggingface.co/datasets/namlh2004/hotpotqa/resolve/main/hotpot_dev_distractor_v1.json",
+  "official_url": "http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json",
+  "n_examples": 153,
+  "example_type_counts": {
+    "multi_hop": 100,
+    "multi_passage": 30,
+    "single_hop": 15,
+    "unanswerable": 8
+  },
+  "corpus_docs": 5675,
+  "targets": {
+    "multi_hop": 100,
+    "multi_passage": 30,
+    "single_hop": 15,
+    "unanswerable": 8
+  }
+}

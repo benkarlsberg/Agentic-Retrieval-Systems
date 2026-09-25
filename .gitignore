@@ -15,11 +15,14 @@ venv/
 .coverage
 htmlcov/
 
-# Ignore ad-hoc local runs, but keep the checked-in offline fixture demonstration
+# Ignore ad-hoc local runs, but keep the checked-in offline fixture and live runs
 results/runs/*
 !results/runs/.gitkeep
 !results/runs/offline_fixture_compare_20260915_024627/
 !results/runs/equal_retrieval_budget_20260915_024643/
+!results/runs/live_gpt4o_mini_compare_20260915_035757/
+!results/runs/live_hotpot150_unconstrained_20260915_042424/
+!results/runs/live_hotpot150_equal_retrieval_20260915_071431/
 !results/runs/latest
 
 results/traces/*
@@ -27,3 +30,7 @@ results/traces/*
 
 # Keep published offline plots/tables
 # (do not ignore results/plots or results/tables contents)
+
+# Raw HotpotQA download (~59 MB) is not redistributed; keep only the slice build metadata
+fixtures/raw/*.json
+!fixtures/raw/hotpot_dev_slice_150_build_meta.json
