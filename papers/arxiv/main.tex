@@ -23,6 +23,9 @@
   urlcolor=blue!60!black
 }
 
+\newcommand{\lem}{L-EM}
+\newcommand{\cg}{CG}
+
 \title{Agentic Retrieval Systems:\\
 A Reproducible Framework for Comparing Conventional RAG,\\
 Iterative, and Multi-Agent Retrieval}
@@ -39,29 +42,33 @@ Georgia Institute of Technology\\
 \maketitle
 
 \begin{abstract}
-Retrieval-augmented generation (RAG) systems increasingly incorporate iterative
-and multi-agent control loops, yet fair comparisons across architectures remain
-difficult: implementations differ in corpora, budgets, traces, and metrics.
-We present \textbf{Agentic Retrieval Systems (ARS)}, an open-source evaluation
-framework that places conventional retrieve-once RAG, a budgeted single-agent
-iterative retriever, and a role-separated multi-agent pipeline under a shared
-corpus, model interface, metric suite, and hard budget regime.
-ARS records structured JSONL traces (queries, retrieved documents, routing
-decisions, stop reasons, and token accounting) and supports budget-matched
-modes (\texttt{equal\_retrieval}, \texttt{equal\_token}, unconstrained).
-We validate the harness offline with a deterministic heuristic model and
-checked-in mini fixtures ($n{=}13$ examples, 24 passages).
-On this synthetic setup, answer quality is matched across architectures
-(EM\,$\approx$\,0.85, F1\,$\approx$\,0.81, abstention correctness\,$=$\,1.0),
-while process cost increases monotonically:
-RAG $\ll$ single-agent $\ll$ multi-agent in model calls and tokens.
-These results are \emph{not} frontier LLM benchmarks; they demonstrate
-harness correctness and quantify coordination overhead under controlled
-conditions.
-ARS is released at
-\url{https://github.com/benkarlsberg/Agentic-Retrieval-Systems}
-to support reproducible comparisons as live models and larger public datasets
-are introduced via adapters.
+Retrieval-augmented generation (RAG) systems increasingly add iterative and
+multi-agent control loops, but comparisons across these architectures are
+often confounded by differences in corpora, budgets, logging, and metrics.
+We present \textbf{Agentic Retrieval Systems (ARS)}, an open-source harness
+that runs conventional retrieve-once RAG, a budgeted single-agent iterative
+retriever, and a role-separated multi-agent pipeline against a shared corpus,
+model interface, metric suite, and budget controller, and records structured
+per-question traces.
+We evaluate the three architectures with \texttt{gpt-4o-mini} on a
+153-question slice derived from the HotpotQA distractor development set
+(100 bridge, 30 comparison, 15 short-context, and 8 synthetic unanswerable
+questions) using BM25 over a pooled corpus of 5{,}675 sentence-level passages,
+under an unconstrained and an equal-retrieval budget mode.
+In the unconstrained run, the multi-agent pipeline reaches a lenient exact
+match of 0.621 (95\% bootstrap CI 0.542--0.693), compared with 0.510 for RAG
+and 0.497 for the single-agent loop; the paired multi-agent minus RAG
+difference is $+0.111$ (95\% CI $+0.059$ to $+0.163$).
+The gain is concentrated on bridge (multi-hop) and comparison
+(multi-passage) questions and comes at 8.2$\times$ the tokens of RAG
+(2{,}744 vs.\ 336 per question) and five model calls instead of one.
+In the same run, the single-agent loop uses 2.7$\times$ the tokens of RAG
+with no measurable quality gain.
+The equal-retrieval run reproduces these results.
+The study is limited to one model, a small derived slice, and a local BM25
+corpus; it is not a HotpotQA leaderboard evaluation.
+Code, configurations, and analysis scripts are available at
+\url{https://github.com/benkarlsberg/Agentic-Retrieval-Systems}.
 \end{abstract}
 
 \section{Introduction}
@@ -74,54 +81,56 @@ Beyond the classical retrieve-once pattern, recent systems interleave
 retrieval with reasoning \citep{trivedi2023ircot,jiang2023flare,yao2023react},
 reflect on evidence quality \citep{asai2023selfrag}, and route queries by
 complexity \citep{jeong2024adaptiverag}.
-In parallel, multi-agent designs decompose planning, retrieval, critique, and
+In parallel, multi-agent designs split planning, retrieval, critique, and
 synthesis across specialized roles.
-These agentic designs promise better coverage on multi-hop and multi-passage
-questions, but they also introduce coordination overhead: extra model calls,
-duplicate retrievals, longer traces, and higher latency.
+These designs are motivated by multi-hop and multi-passage questions, where a
+single retrieval round may miss part of the required evidence, but they add
+model calls, retrieval calls, tokens, and latency.
 
-A practical obstacle for research and engineering is \emph{fair comparison}.
-Published systems rarely share identical corpora, budget caps, logging
-schemas, and metric definitions, so observed quality gaps may confound
-architecture with implementation choices.
-We argue that progress on agentic retrieval requires a harness that holds
-those factors fixed and makes process cost as first-class as answer quality.
+Comparing such architectures fairly is difficult.
+Published systems rarely share corpora, budget caps, logging schemas, and
+metric definitions, so an observed quality gap may reflect implementation
+choices rather than architecture.
+A useful comparison therefore needs a harness that holds these factors fixed
+and reports process cost alongside answer quality.
 
 \paragraph{Research questions.}
-We organize the framework around four questions:
+The framework is organized around four questions:
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
   \item[\textbf{RQ1}] Under matched retrieval or token budgets, does bounded
     iterative retrieval improve answer quality over retrieve-once RAG on
     multi-hop / multi-passage items?
   \item[\textbf{RQ2}] Does role-separated multi-agent retrieval improve
-    evidence coverage and citation fidelity enough to justify coordination
+    evidence coverage and answer quality enough to justify its coordination
     overhead?
-  \item[\textbf{RQ3}] How do architectures differ on unanswerable and
-    ambiguous questions (abstention vs.\ false answers)?
+  \item[\textbf{RQ3}] How do architectures differ on unanswerable questions
+    (abstention vs.\ false answers)?
   \item[\textbf{RQ4}] How sensitive are architecture rankings to sparse
     (BM25), dense, and hybrid retrieval under a fixed corpus?
 \end{enumerate}
+This paper reports evidence on RQ1 and RQ2, preliminary evidence on RQ3
+(8 unanswerable items), and no evidence on RQ4, since all live runs use BM25.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
-  \item A reproducible systems framework comparing three architectures
-    (conventional RAG, bounded single-agent, multi-agent) with shared
-    retrieval, budgets, metrics, and JSONL tracing.
-  \item Explicit budget-matched comparison modes and first-class
-    termination reasons, enabling efficiency-aware evaluation.
-  \item An offline-fixture validation study ($n{=}13$) with
-    \texttt{DeterministicModel}, confirming pipeline correctness and
-    quantifying process overhead when quality is matched.
-  \item An open-source release with adapters for larger public datasets
-    (user-supplied local files) and optional live model backends.
+  \item A reproducible harness that runs conventional RAG, a bounded
+    single-agent loop, and a multi-agent pipeline with shared retrieval,
+    budgets, metrics, and JSONL tracing, including budget-matched comparison
+    modes and logged termination reasons.
+  \item A live comparison of the three architectures with
+    \texttt{gpt-4o-mini} on a 153-question HotpotQA-derived slice under two
+    budget modes, reporting answer quality with bootstrap confidence
+    intervals, paired differences, per-category results, and per-question
+    cost (tokens, model and retrieval calls, latency, estimated USD).
+  \item A quality--cost analysis showing that, in this setting, the
+    multi-agent pipeline improves lenient exact match by about 11 points over
+    RAG, mainly on bridge and comparison questions, at roughly eight times the
+    token cost, while the single-agent loop gives no measurable gain over RAG
+    at 2.6--2.7$\times$ its token cost.
+  \item An open-source release of the code, run configurations, and the
+    analysis script that regenerates every table and figure in this paper
+    from the run artifacts.
 \end{enumerate}
-
-\paragraph{Scope.}
-This paper is primarily a \emph{systems and evaluation framework} paper with
-a small synthetic validation study.
-Checked-in numbers use a heuristic model and mini fixtures; they must not be
-read as HotpotQA/Natural Questions leaderboard results or claims of
-state-of-the-art answer quality for agentic systems.
 
 \section{Related Work}
 \label{sec:related}
@@ -130,7 +139,7 @@ state-of-the-art answer quality for agentic systems.
 Classical open-domain QA pipelines retrieve passages and then read them for
 answers \citep{chen2017drqa}.
 Dense Passage Retrieval \citep{karpukhin2020dpr} and RAG
-\citep{lewis2020rag} popularized end-to-end neural retrieval with generation.
+\citep{lewis2020rag} popularized neural retrieval combined with generation.
 Sparse baselines such as BM25 remain strong and widely used
 \citep{robertson2009bm25}.
 Hybrid fusion (e.g., reciprocal rank fusion) often combines sparse and dense
@@ -147,22 +156,24 @@ Adaptive-RAG routes queries by estimated complexity
 \citep{jeong2024adaptiverag}.
 ReAct and related tool-using agents couple reasoning with actions such as
 search \citep{yao2023react,schick2023toolformer,press2023selfask}.
-ARS does not claim a new retrieval policy; it provides a controlled substrate
-on which such policies can be compared under matched budgets.
+ARS does not propose a new retrieval policy; it provides a controlled
+setting in which such policies can be compared under shared budgets.
 
 \paragraph{Multi-hop benchmarks.}
 HotpotQA \citep{yang2018hotpotqa}, Natural Questions
 \citep{kwiatkowski2019nq}, and 2WikiMultiHopQA \citep{ho2020twowiki}
-remain standard evaluation resources.
-ARS ships adapters that load \emph{user-provided} local copies; it does not
-redistribute those datasets, and this paper reports no leaderboard numbers
-on them.
+are standard evaluation resources.
+Our live study uses a small stratified slice of the HotpotQA distractor
+development set with a local retrieval corpus (Section~\ref{sec:setup}).
+Its numbers are not comparable to the official HotpotQA leaderboard, which
+uses the full development and test sets and a different answer-scoring
+protocol.
 
 \paragraph{Evaluation methodology.}
 Surveys of RAG emphasize the need for systematic metrics spanning answer
 quality, retrieval, faithfulness, and cost \citep{gao2023ragsurvey}.
-ARS contributes a concrete harness: typed schemas, paired bootstrap
-confidence intervals \citep{efron1993bootstrap}, and auditable traces.
+ARS provides typed schemas, per-question traces, and bootstrap confidence
+intervals \citep{efron1993bootstrap} for these measurements.
 
 \section{Framework Design}
 \label{sec:design}
@@ -170,289 +181,549 @@ confidence intervals \citep{efron1993bootstrap}, and auditable traces.
 \subsection{Architectures}
 \label{sec:arch}
 
-ARS implements three runners that share the same corpus, retriever factory,
-model client interface, budget controller, and metric suite.
+ARS implements three runners that share the same corpus, retriever, model
+client, budget controller, and metric suite.
 
 \paragraph{A --- Conventional RAG.}
-A single retrieval call returns \texttt{top\_k} passages; one generation
-call produces the answer.
-This is the retrieve-once baseline corresponding to classical RAG.
+One retrieval call with the original question returns \texttt{top\_k}
+passages; one generation call produces the answer or an abstention.
 
 \paragraph{B --- Bounded single-agent.}
-A decision loop may \emph{retrieve}, \emph{reformulate} the query, or
-\emph{stop}.
+At each step a controller call chooses to \emph{retrieve},
+\emph{reformulate} the query, \emph{stop} (and synthesize), or
+\emph{abstain}.
+Retrieved passages are deduplicated against earlier steps.
 Hard caps on steps, model calls, retrieval calls, documents, and tokens
-prevent unbounded loops.
-Stop reasons (e.g., answer ready, budget exhausted) are logged as first-class
-events.
+bound the loop, and the stop reason is logged.
 
 \paragraph{C --- Multi-agent.}
-A planner decomposes the information need; role-specialized retrievers issue
-queries; a critic assesses evidence sufficiency; a synthesizer produces the
-final answer.
-Coordination messages are recorded in traces so overhead is measurable
-rather than implicit.
+A planner call decomposes the question; two retriever roles (``fact'' and
+``evidence'') alternate over up to three retrieval rounds, each excluding
+passages already retrieved; a critic call after each round judges whether the
+evidence is sufficient; and a synthesizer call produces the final answer or
+an abstention.
+Coordination messages are recorded in the trace.
 
 \subsection{Shared retrieval stack}
-Retrievers include BM25 (with a pure-Python fallback), dense retrieval over
-fixture embeddings (hashing-based for offline use, not a trained dual
-encoder), hybrid RRF fusion, and an optional lexical reranker.
-Architecture rankings under RQ4 are therefore attributable to retrieval
-\emph{modality} rather than divergent corpora.
+Retrievers include Okapi BM25 (with a pure-Python fallback), dense retrieval
+over hashing-based fixture embeddings (not a trained encoder), hybrid RRF
+fusion, and an optional lexical reranker.
+The live study in this paper uses BM25 only.
 
 \subsection{Budgets and comparison modes}
-Default budgets specify limits on steps, model calls, documents, tokens,
-retrieval calls, and \texttt{top\_k}.
-Comparison modes include:
+Budgets limit steps, model calls, documents, tokens, retrieval calls, and
+\texttt{top\_k}.
+Comparison modes rewrite the per-architecture budget:
 \begin{itemize}[leftmargin=*,itemsep=1pt]
-  \item \texttt{equal\_retrieval}: matched retrieval-call / document budgets
-    (RAG remains a single retrieve);
-  \item \texttt{equal\_token}: matched token budgets;
-  \item \texttt{unconstrained}: per-architecture defaults, still hard-capped.
+  \item \texttt{unconstrained}: the configured budget, still hard-capped;
+  \item \texttt{equal\_retrieval}: at most 3 retrieval calls and 15
+    documents for every architecture, with RAG restricted to one retrieval
+    call and one model call;
+  \item \texttt{equal\_token}: a shared token cap (not run in this study).
 \end{itemize}
-These modes operationalize fair comparison for RQ1--RQ2.
 
 \subsection{Tracing}
-Every example emits JSONL events covering reformulated queries, retrieved
-document IDs and scores, routing actions, model/token accounting, latency,
-estimated cost, and termination reason.
-An HTML trace viewer supports qualitative audit.
-Prompt text may be hashed in traces to reduce accidental leakage of
-sensitive content in live runs.
-
-\subsection{Metrics}
-ARS reports:
-\begin{itemize}[leftmargin=*,itemsep=1pt]
-  \item \textbf{Answer:} exact match (EM), token F1, lexical similarity;
-  \item \textbf{Retrieval:} recall@$k$, mean reciprocal rank (MRR);
-  \item \textbf{Citations:} precision/recall against gold document IDs when
-    available;
-  \item \textbf{Abstention:} correctness on unanswerable items;
-  \item \textbf{Efficiency:} latency, model calls, retrieval calls, tokens,
-    unique vs.\ duplicate passages, config-based cost estimates.
-\end{itemize}
-Paired bootstrap confidence intervals on per-example metric deltas support
-architecture comparisons on shared IDs.
+Every question emits JSONL events covering issued queries, retrieved passage
+IDs and scores, routing actions, token accounting, latency, estimated cost,
+and termination reason.
+An HTML viewer supports qualitative inspection of individual traces.
 
 \subsection{Model interface}
-A provider-neutral client supports (i)~a \texttt{DeterministicModel} for
-offline CI and fixture validation, and (ii)~optional OpenAI-compatible live
-backends via environment configuration.
-Live keys are never committed; live results must be labeled separately from
-fixture baselines.
+A provider-neutral client supports a deterministic heuristic model
+(\texttt{DeterministicModel}) for offline tests, and OpenAI-compatible live
+backends configured through environment variables.
+Token counts in live runs are taken from the API usage fields.
 
 \section{Experimental Setup}
 \label{sec:setup}
 
-\subsection{Offline fixtures}
-The checked-in evaluation uses:
+\subsection{Dataset slice}
+\label{sec:data}
+We derive a 153-question evaluation slice from the HotpotQA distractor
+development set (\texttt{hotpot\_dev\_distractor\_v1.json}, 7{,}405
+questions, all labelled \emph{hard}) with seeded sampling (seed 42).
+Table~\ref{tab:slice} lists the strata.
+Multi-hop items are HotpotQA \emph{bridge} questions and multi-passage items
+are \emph{comparison} questions.
+HotpotQA does not annotate hop count; the 15 items in the single-hop stratum
+are bridge (9) and comparison (6) questions with short contexts
+(4--19 sentences, against a median of 40 in the development set; 9 of them
+have fewer than the usual ten paragraphs), so this stratum is better read as
+``short-context'' than as guaranteed single-hop.
+The 8 unanswerable questions are synthetic questions about fictional
+entities (e.g., ``What is the capital of the Republic of Middle
+Earthia?'') with no support in the corpus.
+Gold answers are the HotpotQA answer strings (mean length 2.5 words); no
+answer aliases are used.
+
+\begin{table}[t]
+\centering
+\caption{Composition of the 153-question evaluation slice.}
+\label{tab:slice}
+\begin{tabular}{llr}
+\toprule
+Stratum & Source & $n$ \\
+\midrule
+Multi-hop      & HotpotQA bridge            & 100 \\
+Multi-passage  & HotpotQA comparison        & 30 \\
+Single-hop (short context) & HotpotQA bridge (9) / comparison (6) & 15 \\
+Unanswerable   & synthetic                  & 8 \\
+\midrule
+Total & & 153 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Corpus and retrieval}
+The retrieval corpus is the union of the distractor-setting context
+paragraphs of the 145 HotpotQA questions (the two supporting paragraphs plus
+distractors; ten paragraphs for 135 questions and two to five for the other
+ten), split into sentences.
+Each sentence is one passage with ID \texttt{title::s$i$}, giving 5{,}675
+passages.
+Retrieval is Okapi BM25 ($k_1{=}1.5$, $b{=}0.75$) over title and sentence
+text, with \texttt{top\_k}\,$=$\,5 passages per call.
+Because distractor paragraphs from all questions are pooled, each question
+competes against passages from the other 144 questions as well as its own
+distractors.
+For retrieval diagnostics, the gold evidence of a question is the set of all
+sentences of its supporting paragraphs.
+
+\subsection{Model and budgets}
+All model calls use \texttt{gpt-4o-mini} through the OpenAI API with
+temperature 0 and at most 512 output tokens per call.
+In the \texttt{unconstrained} mode the budget is 8 steps, 12 model calls,
+5 retrieval calls, 20 documents, and 8{,}000 tokens per question.
+In the \texttt{equal\_retrieval} mode the single-agent and multi-agent
+runners are limited to 3 retrieval calls and 15 documents, and RAG to one
+retrieval and one model call.
+Each mode was run once over all 153 questions for each architecture
+(459 questions per mode); no call failed.
+
+Two properties of the runs affect how the modes should be read.
+First, the multi-agent critic's verdict never matched the controller's
+early-stop pattern, so every question received exactly three retrieval
+rounds followed by synthesis (5 model calls and 3 retrieval calls for all
+153 questions in both modes); the multi-agent condition therefore behaved as
+a fixed three-round pipeline.
+Second, RAG uses a single top-5 retrieval in both modes.
+The equal-retrieval mode thus caps retrieval calls but does not equalize the
+number of passages each architecture actually reads, and it changes the
+effective budget only for the single-agent loop.
+We therefore treat the equal-retrieval run primarily as a replication of the
+unconstrained run.
+
+\subsection{Metrics}
+\label{sec:metrics}
+Answers are normalized in the HotpotQA style (lower-casing and removing
+punctuation, articles, and extra whitespace).
 \begin{itemize}[leftmargin=*,itemsep=1pt]
-  \item Corpus: \texttt{fixtures/corpus/mini\_wiki.jsonl} (24 passages);
-  \item Dataset: \texttt{fixtures/datasets/mini\_eval.jsonl} ($n{=}13$
-    questions spanning single-hop, multi-hop/multi-passage, and
-    unanswerable items);
-  \item Model: \texttt{DeterministicModel} (\texttt{deterministic-v1}), a
-    keyword/heuristic answerer over retrieved context;
-  \item Retrieval: BM25, \texttt{top\_k}\,$=$\,5;
-  \item Seed: 42;
-  \item Mode: \texttt{unconstrained} (primary table); equal-retrieval mode
-    also exercised.
+  \item \textbf{Lenient EM (\lem{})}: 1 if the normalized prediction equals
+    the normalized gold answer or either string contains the other
+    (the harness field \texttt{em}).
+  \item \textbf{Contains-gold (\cg{})}: 1 if the normalized prediction
+    contains the normalized gold answer (reverse containment is accepted only
+    for short strings of at most five tokens).
+  \item \textbf{Strict EM}: normalized string equality (harness field
+    \texttt{soft\_em}).
+  \item \textbf{Token F1}: SQuAD-style token-overlap F1 against the gold
+    answer.
+  \item \textbf{Soft F1}: token F1, raised to 0.5 when \cg{}$\,=1$.
+  \item \textbf{Abstention}: whether the system abstains on unanswerable
+    questions and answers the answerable ones.
+  \item \textbf{Evidence recall}: the fraction of gold-evidence sentences
+    retrieved at any point for the question, and the fraction of questions
+    for which at least one sentence of every supporting paragraph was
+    retrieved.
+    We recompute both from the traces for all
+    architectures.\footnote{The harness's own \texttt{recall@k} field matches
+    our recomputation for RAG and multi-agent, but for the single-agent
+    runner it falls back to the gold IDs because that runner logs retrieved
+    IDs in a different trace event, and it reports a spurious 1.0.}
+  \item \textbf{Cost}: model calls, retrieval calls, unique passages read,
+    total tokens (prompt plus completion), wall-clock latency, and an
+    estimated USD cost.
 \end{itemize}
-\textbf{Label:} all reported numbers are \emph{offline-fixture / synthetic
-validation of the harness}, not frontier LLM evaluations.
+Answer metrics are 0 on the 8 unanswerable questions, and all means are over
+the full 153 questions, so the maximum attainable \lem{} is
+$145/153 = 0.948$.
+Because \texttt{gpt-4o-mini} answers in full sentences (30--34 words on
+average for non-abstained answers, against 2.5-word gold answers), strict EM
+is 0.000 for every architecture in both runs and token F1 is heavily
+penalized by answer length.
+We therefore use \lem{} and \cg{} as the primary quality metrics, report
+soft F1 as a secondary graded measure, and report token F1 only for
+completeness.
+\lem{} and \cg{} coincide on every question except one (single-agent,
+equal-retrieval).
 
-\subsection{DeterministicModel policy}
-The mock model extracts answers from retrieved passages with fixed
-heuristics and question gating.
-Consequently, when retrieval surface form is similar, architectures tend to
-\emph{match} on EM/F1; differences appear in control flow and cost.
-This is intentional for validating wiring, budgets, and traces without API
-keys.
+The estimated cost uses list prices of USD 0.15 (input) and USD 0.60 (output)
+per million tokens, and the harness splits each question's total tokens
+equally between input and output; it is a rough estimate, not billing data.
+Latency is end-to-end wall-clock time including API round trips.
 
-\subsection{Configs and reproduction}
-Primary config:
-\texttt{configs/experiments/offline\_fixture\_compare.yaml}.
-Budget-matched configs include
-\texttt{equal\_retrieval.yaml} and \texttt{equal\_token.yaml}.
-Ten ablation YAML files document planned studies (critic/planner ablations,
-hybrid/dense retrieval, \texttt{top\_k}, strict budgets, reformulation off,
-reranker).
-Reproduction:
+\paragraph{Statistics.}
+We report percentile bootstrap 95\% confidence intervals
+\citep{efron1993bootstrap} with 10{,}000 resamples over questions.
+Architecture differences are estimated with a paired bootstrap over the
+same questions; we also report discordant counts, i.e., the number of
+questions answered correctly by one architecture but not the other.
+
+\subsection{Reproduction}
+The live runs are defined by
+\path{configs/experiments/live_hotpot150_unconstrained.yaml} and
+\path{configs/experiments/live_hotpot150_equal_retrieval.yaml}.
+The slice and its corpus are distributed as
+\path{fixtures/datasets/hotpot_dev_slice_150.jsonl} and
+\path{fixtures/corpus/hotpot_dev_slice_150.jsonl}; the build metadata (seed
+and SHA-256 of the source file) is recorded in
+\path{fixtures/raw/hotpot_dev_slice_150_build_meta.json}.
 \begin{verbatim}
-pip install -e ".[dev]"
+pip install -e ".[dev,openai]"
 python scripts/run_experiment.py \
-  --config configs/experiments/offline_fixture_compare.yaml
-python scripts/generate_report.py --run-dir results/runs/latest
+  --config configs/experiments/live_hotpot150_unconstrained.yaml
+python analysis/compute_tables.py --ars-root <path-to-ARS>
 \end{verbatim}
-Artifacts include per-architecture summaries, comparison tables, plots, and
-full traces under \texttt{results/}.
+The last script recomputes every number, table, and figure in
+Section~\ref{sec:results} from the per-question results and traces.
 
 \section{Results}
 \label{sec:results}
 
-Table~\ref{tab:main} reports the primary offline-fixture comparison
-(unconstrained BM25, seed 42, $n{=}13$).
-Figure~\ref{fig:tradeoff} visualizes per-example F1 against token cost;
-Figures~\ref{fig:em}--\ref{fig:f1} summarize mean EM and F1.
+\subsection{Overall quality}
+
+Table~\ref{tab:quality} reports answer quality for both modes.
+In the unconstrained run, the multi-agent pipeline reaches \lem{} 0.621,
+against 0.510 for RAG and 0.497 for the single-agent loop.
+The paired multi-agent minus RAG difference is $+0.111$
+(95\% CI $+0.059$ to $+0.163$); the multi-agent pipeline answers 18
+questions correctly that RAG misses, and RAG answers 1 question correctly that
+the multi-agent pipeline misses.
+The single-agent minus RAG difference is $-0.013$ ($-0.065$ to $+0.039$;
+7 vs.\ 9 discordant questions), i.e., no detectable difference.
+Soft F1 gives the same ordering (multi-agent minus RAG $+0.054$, CI
+$+0.029$ to $+0.080$; single-agent minus RAG $-0.009$, CI $-0.034$ to
+$+0.016$).
+
+The equal-retrieval run gives nearly identical results: multi-agent minus RAG
+is $+0.118$ ($+0.072$ to $+0.170$; 18 vs.\ 0 discordant) and single-agent
+minus RAG is $+0.013$ ($-0.039$ to $+0.065$; 10 vs.\ 8).
+Per-question \lem{} agrees between the two runs on 99.3\% (RAG), 96.7\%
+(single-agent), and 97.4\% (multi-agent) of questions.
+Since the RAG pipeline and its retrieval are identical in both modes, the
+disagreements for RAG reflect residual non-determinism of the API at
+temperature 0.
 
 \begin{table}[t]
 \centering
-\caption{Offline-fixture validation ($n{=}13$, DeterministicModel, BM25,
-unconstrained, seed 42). Quality is matched; process cost increases with
-agentic complexity. EM/F1 rounded to three decimals; tokens are means.}
-\label{tab:main}
+\small
+\caption{Answer quality on the 153-question slice (\texttt{gpt-4o-mini},
+BM25, top-5). Means with percentile bootstrap 95\% CIs (10{,}000
+resamples). \lem{} and \cg{} are the primary metrics
+(Section~\ref{sec:metrics}); strict EM is 0.000 for all rows.}
+\label{tab:quality}
+\begin{tabular}{lcccc}
+\toprule
+Architecture & \lem{} & \cg{} & Soft F1 & Token F1 \\
+\midrule
+\multicolumn{5}{l}{\emph{Unconstrained}} \\
+\quad RAG & 0.510 {\scriptsize[0.431, 0.588]} & 0.510 {\scriptsize[0.431, 0.588]} & 0.279 {\scriptsize[0.242, 0.316]} & 0.097 \\
+\quad Single-agent & 0.497 {\scriptsize[0.418, 0.575]} & 0.497 {\scriptsize[0.418, 0.575]} & 0.270 {\scriptsize[0.233, 0.307]} & 0.096 \\
+\quad Multi-agent & 0.621 {\scriptsize[0.542, 0.693]} & 0.621 {\scriptsize[0.542, 0.699]} & 0.333 {\scriptsize[0.297, 0.368]} & 0.107 \\
+\midrule
+\multicolumn{5}{l}{\emph{Equal-retrieval}} \\
+\quad RAG & 0.503 {\scriptsize[0.425, 0.582]} & 0.503 {\scriptsize[0.425, 0.582]} & 0.276 {\scriptsize[0.239, 0.314]} & 0.097 \\
+\quad Single-agent & 0.516 {\scriptsize[0.438, 0.595]} & 0.510 {\scriptsize[0.431, 0.588]} & 0.277 {\scriptsize[0.239, 0.315]} & 0.098 \\
+\quad Multi-agent & 0.621 {\scriptsize[0.542, 0.693]} & 0.621 {\scriptsize[0.542, 0.693]} & 0.333 {\scriptsize[0.297, 0.368]} & 0.105 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cost}
+
+Table~\ref{tab:cost} reports process cost.
+RAG uses one model call and 336 tokens per question.
+The single-agent loop uses 2.99 model calls and 892 tokens
+(2.7$\times$ RAG), and the multi-agent pipeline uses 5 model calls and
+2{,}744 tokens (8.2$\times$ RAG), and it reads 13.1 unique passages per
+question against 5.0 for RAG.
+Estimated cost for the 153 questions is USD 0.019 (RAG), 0.051
+(single-agent), and 0.157 (multi-agent).
+Within the unconstrained run, median latency is 0.77\,s for RAG, 19.8\,s for
+the single-agent loop, and 41.7\,s for the multi-agent pipeline.
+Latency is less stable than the other cost measures: RAG's mean latency was
+0.81\,s in the unconstrained run and 8.57\,s in the equal-retrieval run with
+an identical pipeline, so latencies should be compared only within a run.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Process cost per question (means over 153 questions). Latency is
+wall-clock seconds (mean / median). Cost is the estimated USD total for all
+153 questions (Section~\ref{sec:metrics}).}
+\label{tab:cost}
 \begin{tabular}{lcccccc}
 \toprule
-Architecture & EM & F1 & Abst.\ corr. &
-  Avg.\ model & Avg.\ retr. & Avg.\ tokens \\
+ & Model & Retr. & Unique & & & Est.\ cost \\
+Architecture & calls & calls & passages & Tokens & Latency (s) & (USD) \\
 \midrule
-RAG            & 0.846 & 0.810 & 1.000 & 1.00 & 1.00 & $\sim$295 \\
-Single-agent   & 0.846 & 0.810 & 1.000 & 3.00 & 1.00 & $\sim$654 \\
-Multi-agent    & 0.846 & 0.810 & 1.000 & 4.31 & 2.31 & $\sim$1626 \\
+\multicolumn{7}{l}{\emph{Unconstrained}} \\
+\quad RAG & 1.00 & 1.00 & 5.0 & 336 & 0.81 / 0.77 & 0.019 \\
+\quad Single-agent & 2.99 & 1.16 & 5.2 & 892 & 22.70 / 19.79 & 0.051 \\
+\quad Multi-agent & 5.00 & 3.00 & 13.1 & 2744 & 43.16 / 41.72 & 0.157 \\
+\midrule
+\multicolumn{7}{l}{\emph{Equal-retrieval}} \\
+\quad RAG & 1.00 & 1.00 & 5.0 & 337 & 8.57 / 9.52 & 0.019 \\
+\quad Single-agent & 2.93 & 1.12 & 5.3 & 859 & 25.42 / 28.23 & 0.049 \\
+\quad Multi-agent & 5.00 & 3.00 & 13.1 & 2732 & 43.18 / 41.76 & 0.157 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:pareto} places each architecture in the quality--token plane.
+In both modes RAG and the multi-agent pipeline lie on the Pareto frontier.
+In the unconstrained run the single-agent loop is dominated by RAG (lower
+\lem{} at higher cost); in the equal-retrieval run it lies nominally on the
+frontier, but its advantage over RAG ($+0.013$) is well within the
+confidence interval.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/live_pareto_tokens.png}
+\caption{Answer quality versus mean tokens per question (log scale) for both
+budget modes. Filled circles: unconstrained; open squares: equal-retrieval.
+Error bars are bootstrap 95\% CIs; lines connect the Pareto-optimal
+architectures in each mode (solid: unconstrained, dashed: equal-retrieval).
+The multi-agent points for the two modes almost coincide.}
+\label{fig:pareto}
+\end{figure}
+
+\subsection{Results by question category}
+
+Table~\ref{tab:category} and Figure~\ref{fig:category} break down \lem{} by
+stratum for the unconstrained run.
+The multi-agent advantage over RAG is $+0.12$ on multi-hop questions
+(0.580 vs.\ 0.460; 13 vs.\ 1 discordant) and $+0.13$ on multi-passage
+questions (0.867 vs.\ 0.733; 4 vs.\ 0 discordant).
+Both paired intervals exclude zero, although the multi-passage interval is
+wide ($+0.033$ to $+0.267$) because $n{=}30$.
+On the 15 short-context items the difference is one question.
+The single-agent loop is within one or two questions of RAG on every
+stratum.
+All three architectures score 0 on the unanswerable stratum by construction;
+their abstention behaviour is reported in Table~\ref{tab:diag}.
+The equal-retrieval run shows the same pattern (multi-hop: RAG 0.450,
+single-agent 0.490, multi-agent 0.580; multi-passage: 0.733, 0.700, 0.900).
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\caption{\lem{} by stratum, unconstrained mode (Single: single-agent;
+Multi: multi-agent; per-architecture bootstrap
+95\% CIs are shown in Figure~\ref{fig:category}). $\Delta$ columns give
+paired differences against RAG with bootstrap 95\% CIs; the parenthesized
+pair counts questions correct only for the first architecture / only for
+RAG.}
+\label{tab:category}
+\begin{tabular}{lccccc}
+\toprule
+Stratum ($n$) & RAG & Single & Multi &
+  $\Delta$ Multi $-$ RAG & $\Delta$ Single $-$ RAG \\
+\midrule
+Multi-hop (100) & 0.460 & 0.470 & 0.580 & $+$0.120 {\scriptsize[$+$0.050, $+$0.190]} (13/1) & $+$0.010 {\scriptsize[$-$0.050, $+$0.070]} (6/5) \\
+Multi-passage (30) & 0.733 & 0.700 & 0.867 & $+$0.133 {\scriptsize[$+$0.033, $+$0.267]} (4/0) & $-$0.033 {\scriptsize[$-$0.167, $+$0.067]} (1/2) \\
+Single-hop (15) & 0.667 & 0.533 & 0.733 & $+$0.067 {\scriptsize[$+$0.000, $+$0.200]} (1/0) & $-$0.133 {\scriptsize[$-$0.333, $+$0.000]} (0/2) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\linewidth]{figures/offline_fixture_tradeoff.png}
-\caption{Budget--quality tradeoff on the offline fixture (per-example F1 vs.\
-tokens). Architectures share similar F1 mass near 1.0 with a common failure
-at F1\,$=$\,0; multi-agent occupies a higher token regime. This plot
-illustrates process overhead under matched heuristic quality---not a live
-LLM ranking.}
-\label{fig:tradeoff}
+\includegraphics[width=0.8\linewidth]{figures/live_category_em.png}
+\caption{\lem{} by stratum and architecture, unconstrained mode. Error bars
+are bootstrap 95\% CIs. The unanswerable stratum ($n{=}8$) is omitted
+because answer metrics are 0 there by definition.}
+\label{fig:category}
 \end{figure}
 
-\begin{figure}[t]
+\subsection{Evidence coverage and abstention}
+
+Table~\ref{tab:diag} reports retrieval and abstention diagnostics for the
+unconstrained run.
+The multi-agent pipeline retrieves 64.1\% of gold-evidence sentences and
+covers every supporting paragraph for 76.6\% of answerable questions,
+against 36.6\% and 48.3\% for RAG.
+The single-agent loop retrieves little more than RAG (38.3\% and 50.3\%);
+it issued a single retrieval call on 101 of 153 questions and none on 24.
+On 16 answerable questions the single-agent controller abstained without
+retrieving anything.
+It abstains on 31 of 145 answerable questions, RAG on 24, and the
+multi-agent pipeline on 8.
+On the unanswerable items, RAG and the single-agent loop abstain on all 8
+and the multi-agent pipeline on 6.
+
+\begin{table}[!ht]
 \centering
-\begin{subfigure}[t]{0.48\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/offline_fixture_em.png}
-  \caption{Mean EM.}
-  \label{fig:em}
-\end{subfigure}
-\begin{subfigure}[t]{0.48\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/offline_fixture_f1.png}
-  \caption{Mean F1.}
-  \label{fig:f1}
-\end{subfigure}
-\caption{Offline-fixture answer metrics by architecture. Bars are essentially
-identical; the evaluation signal for this run is efficiency, not quality
-separation.}
-\label{fig:em_f1}
-\end{figure}
-
-\paragraph{Quality.}
-EM ($0.846$), F1 ($0.810$), and abstention correctness ($1.0$) are identical
-across architectures on this fixture after question-gated mock answering.
-Bootstrap 95\% intervals are wide (as expected for $n{=}13$).
-Eleven of thirteen answerable-or-partial items score as successful under the
-EM/F1 thresholds used in reporting; both unanswerable items yield correct
-abstention for all three runners.
-
-\paragraph{Efficiency (primary signal).}
-Average model calls rise from $1.00$ (RAG) to $3.00$ (single-agent) to
-$4.31$ (multi-agent).
-Average tokens rise from $\sim$295 to $\sim$654 to $\sim$1626.
-Multi-agent also issues more retrieval calls ($2.31$ vs.\ $1.00$) and logs
-coordination messages.
-Thus the harness recovers the designed cost ordering
-RAG $\ll$ single-agent $\ll$ multi-agent when answer quality is held
-approximately fixed by the deterministic policy.
-
-\paragraph{Equal-retrieval mode.}
-An equal-retrieval budget run completed successfully without API keys,
-exercising matched retrieval caps while preserving shared metrics and
-traces.
-This confirms that budget modes are operational for future live-model
-comparisons under RQ1.
-
-\paragraph{What we do not claim.}
-We do not claim that agentic architectures outperform RAG on frontier LLMs,
-nor do we report HotpotQA/NQ scores.
-Fixture equality of EM/F1 is expected under a shared heuristic answerer; it
-is evidence that evaluation plumbing is consistent, not that agentic
-complexity is useless in general.
+\small
+\caption{Diagnostics, unconstrained mode. Evidence recall: mean fraction of
+gold-evidence sentences retrieved (answerable questions). All support:
+fraction of answerable questions with at least one retrieved sentence from
+every supporting paragraph. Abstentions are counts. Answer length is the mean
+number of words in non-abstained answers.}
+\label{tab:diag}
+\begin{tabular}{lccccc}
+\toprule
+ & Evidence & All & \multicolumn{2}{c}{Abstentions} & Answer \\
+\cmidrule(lr){4-5}
+Architecture & recall & support & answerable & unanswerable & words \\
+\midrule
+RAG & 0.366 & 0.483 & 24/145 & 8/8 & 30.0 \\
+Single-agent & 0.383 & 0.503 & 31/145 & 8/8 & 33.1 \\
+Multi-agent & 0.641 & 0.766 & 8/145 & 6/8 & 33.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{What fixture runs show.}
-Offline runs validate that (i)~all three architectures execute end-to-end,
-(ii)~hard budgets and stop reasons are enforceable, (iii)~traces are complete
-enough for audit, (iv)~metrics and paired bootstrap utilities are wired, and
-(v)~process overhead is measurable and ordered as designed.
+\paragraph{Where the multi-agent pipeline helps.}
+The multi-agent gain is clearest on the bridge and comparison strata, where
+answering requires combining evidence from two paragraphs and where the
+strata are large enough for the paired intervals to exclude zero.
+It coincides with higher evidence coverage (Table~\ref{tab:diag}): with
+three deduplicated retrieval rounds the pipeline reads about 13 sentences
+instead of 5, and far more often retrieves material from both supporting
+paragraphs.
+It also abstains less often on answerable questions (8 vs.\ 24 for RAG).
+These observations are consistent with the view that the gain comes mainly
+from reading more, and more diverse, evidence rather than from role
+separation itself.
+Because the critic never stopped early in these runs, the study cannot
+separate the contribution of planning and critique from that of a fixed
+three-round retrieval schedule; an ablation that gives RAG a comparable
+passage budget (e.g., \texttt{top\_k}\,$=$\,15) would be needed.
+The pipeline's lower abstention rate has a cost on unanswerable questions,
+where it answered 2 of 8 instead of abstaining.
 
-\paragraph{What they do not show.}
-They do not establish absolute quality of production LLMs, production latency
-distributions, or architecture rankings on full multi-hop benchmarks.
-Statistical power is limited by $n{=}13$.
+\paragraph{Why the single-agent loop does not help.}
+In this configuration the single-agent loop rarely iterates: 101 of 153
+questions received exactly one retrieval call and 24 received none.
+Its evidence coverage is therefore close to RAG's, and its additional model
+calls are spent mostly on control decisions rather than on retrieval.
+It also abstains more often on answerable questions than RAG, including 16
+questions on which it abstained before retrieving anything.
+The loop consequently adds tokens and latency without improving answer
+quality.
+This finding concerns this controller prompt and this model; it does not
+show that iterative retrieval is ineffective in general
+\citep{trivedi2023ircot,jiang2023flare}.
 
-\paragraph{When agentic complexity may help.}
-Under live models, iterative reformulation and multi-agent role separation
-are hypothesized to help when: evidence is split across passages (multi-hop);
-one-shot BM25 misses a second hop; citation fidelity and evidence recall
-matter more than token cost; or unanswerable questions require explicit
-abstention policies beyond naive generation.
-ARS is designed so those hypotheses can be tested under
-\texttt{equal\_retrieval} / \texttt{equal\_token} with paired bootstrap
-deltas---once a live backend and larger stratified samples are configured.
+\paragraph{Quality--cost trade-off.}
+Viewed as a Pareto problem, RAG and the multi-agent pipeline are both
+efficient choices here, and which one to use depends on the value of about
+11 additional correct answers per 100 questions relative to roughly
+8$\times$ the tokens, 5$\times$ the model calls, and tens of seconds of
+added latency per question.
+At the list prices used here the absolute cost difference is small
+(about USD 0.14 per 153 questions), so latency and API rate limits may matter
+more than token cost in practice.
+The single-agent loop, as configured, is not on the unconstrained frontier.
 
-\paragraph{Systems insights.}
-Making budgets and stop reasons first-class prevents silent unbounded agent
-loops.
-Shared retrieval and schemas reduce confounds.
-Treating coordination messages and duplicate passages as metrics reframes
-``multi-agent benefit'' as an explicit cost--benefit question (RQ2).
+\paragraph{Answer format and metrics.}
+The gap between \lem{} ($\approx$0.5--0.6) and token F1 ($\approx$0.1) is
+caused by answer verbosity, not by retrieval: the model typically embeds the
+correct short answer in a full sentence.
+Containment-based metrics credit these answers, but they can also credit a
+long answer that mentions the gold string without committing to it.
+Constraining the output format or extracting a short answer span would allow
+standard strict EM and token F1 to be used.
 
 \section{Limitations}
 \label{sec:limitations}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-  \item \textbf{Synthetic validation only.} Checked-in results use
-    \texttt{DeterministicModel} and mini fixtures; they are not frontier
-    benchmarks.
-  \item \textbf{Small $n$.} Wide confidence intervals; rankings are not
-    statistically decisive.
-  \item \textbf{Dense retrieval.} Fixture dense embeddings use hashing, not
-    trained dual encoders such as DPR \citep{karpukhin2020dpr}.
-  \item \textbf{Ablation toggles.} Ten ablation configs are present; some
-    behavioral switches (e.g., hard skip-critic) remain extension points.
-  \item \textbf{Cost estimates.} USD figures in configs are timestamped
-    estimates, not live billing.
-  \item \textbf{Dataset redistribution.} HotpotQA/NQ/2Wiki adapters require
-    user-provided local files; no leaderboard results are reported here.
+  \item \textbf{One model.} All live results use \texttt{gpt-4o-mini} at
+    temperature 0; rankings may differ for other models.
+  \item \textbf{Derived slice, not the full benchmark.} The 153 questions
+    are a stratified sample of the HotpotQA distractor development set plus
+    8 synthetic unanswerable questions, and the short-context stratum is not
+    a verified single-hop set. The numbers are not comparable to HotpotQA
+    leaderboard results.
+  \item \textbf{Primary metrics are lenient.} Raw token F1 is depressed by
+    verbose answers, and strict EM is 0 for every architecture because
+    normalized string equality almost never holds for sentence-length
+    answers. We therefore rely on \lem{} and \cg{}, which are containment
+    based and can over-credit long answers.
+  \item \textbf{Small strata.} With 30, 15, and 8 questions in the smaller
+    strata, confidence intervals are wide, and per-category conclusions
+    beyond the multi-hop stratum are tentative.
+  \item \textbf{Local BM25 corpus.} Retrieval runs over a pooled corpus of
+    sentence-level passages built from the distractor paragraphs, not over
+    full Wikipedia, and only BM25 is evaluated (RQ4 is not addressed).
+  \item \textbf{Budget matching.} The equal-retrieval mode caps retrieval
+    calls but does not equalize passages read, and the multi-agent critic
+    never triggered an early stop; the equal-token mode was not run.
+  \item \textbf{Single runs.} Each configuration was run once; the
+    agreement between the two modes suggests low but non-zero run-to-run
+    variation.
+  \item \textbf{Cost and citations.} USD figures are estimates from list
+    prices and an assumed equal input/output token split. The harness did
+    not parse the citation format produced by the model, so citation
+    precision and recall are not reported.
 \end{itemize}
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
-We introduced Agentic Retrieval Systems (ARS), a reproducible framework for
-comparing conventional RAG, bounded iterative retrieval, and multi-agent
-retrieval under shared corpora, budgets, traces, and metrics.
-An offline-fixture study confirms harness correctness and shows matched
-heuristic quality with clearly increasing coordination and token cost as
-architectures become more agentic.
-We release the code openly to support controlled follow-on experiments.
+We presented ARS, a harness for comparing conventional RAG, bounded
+iterative retrieval, and multi-agent retrieval under a shared corpus,
+budget controller, trace format, and metric suite.
+On a 153-question HotpotQA-derived slice with \texttt{gpt-4o-mini} and BM25,
+a three-round multi-agent pipeline improved lenient exact match over RAG by
+about 11 points, mainly on bridge and comparison questions, at about eight
+times the token cost and a large latency increase, while the single-agent
+loop added cost without a quality gain.
+Both findings replicated under an equal-retrieval budget.
 
 \paragraph{Future work.}
-(1)~Live OpenAI-compatible models on stratified samples of 100--200
-multi-hop-style items under equal-retrieval and equal-token modes;
-(2)~full behavioral enforcement of ablation switches;
-(3)~learned rerankers and trained dense encoders;
-(4)~error taxonomies mined from traces (query drift, duplicate retrieval,
-premature stop);
-(5)~larger public datasets via existing adapters with clear separation of
-live results from fixture baselines.
+(1)~Passage-budget-matched baselines (RAG with larger \texttt{top\_k}) and
+the equal-token mode;
+(2)~a critic output format that the controller parses, so that early
+stopping and critique can be ablated;
+(3)~constrained short-answer output so that strict EM and token F1 are
+informative, and citation parsing;
+(4)~additional models, the full HotpotQA development set, and
+2WikiMultiHopQA;
+(5)~dense and hybrid retrieval for RQ4.
 
-\section*{Acknowledgments}
-The author thanks the open-source community for tools used in retrieval and
-evaluation infrastructure.
-Code is available at
-\url{https://github.com/benkarlsberg/Agentic-Retrieval-Systems}
-under the MIT license.
+\section*{Code Availability}
+Code, configurations, and the analysis script are released under the MIT
+license at
+\url{https://github.com/benkarlsberg/Agentic-Retrieval-Systems}.
+
+\appendix
+\section{Pipeline Validation}
+\label{app:validation}
+
+Before the live study, the harness was checked in two small runs on the
+checked-in mini fixtures (24 passages, $n{=}13$ questions covering
+single-hop, multi-hop, multi-passage, ambiguous, and unanswerable items;
+BM25, top-5, unconstrained).
+With the heuristic \texttt{DeterministicModel}, all three architectures
+obtained the same \lem{} (0.846) and abstention correctness (1.000), as
+expected for a shared extractive heuristic, while cost increased with
+architectural complexity (1.00, 3.00, and 4.31 model calls; 294, 654, and
+1{,}625 mean tokens for RAG, single-agent, and multi-agent).
+A live \texttt{gpt-4o-mini} smoke run on the same 13 questions gave \lem{}
+0.692 for all three architectures, with 1.00, 4.23, and 5.00 model calls and
+300, 1{,}460, and 2{,}331 mean tokens.
+An offline equal-retrieval run also completed.
+These runs verified that the runners, budgets, traces, and metrics operate
+end to end; with $n{=}13$ they carry no information about relative answer
+quality.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

@@ -1,22 +1,8 @@
 {
-  "sources": [
-    "main.tex",
-    "references.bib",
-    "figures/offline_fixture_em.png",
-    "figures/offline_fixture_f1.png",
-    "figures/offline_fixture_tradeoff.png"
-  ],
   "process": {
-    "compiler": "pdflatex",
-    "bibliography": "bibtex"
+    "compiler": "pdflatex"
   },
-  "notes": [
-    "Upload all sources listed above (including figures/) as a single .tar.gz or .zip to arXiv.",
-    "Suggested primary category: cs.IR. Cross-list: cs.CL, cs.AI.",
-    "Comments field suggestion: 8 pages; systems/evaluation framework paper; offline-fixture validation only (DeterministicModel, n=13); code: https://github.com/benkarlsberg/Agentic-Retrieval-Systems",
-    "Do not include the built PDF in the source upload unless using the PDF-only submission path (prefer source).",
-    "README.md and Makefile are for local build convenience and need not be uploaded to arXiv."
-  ],
-  "title": "Agentic Retrieval Systems: A Reproducible Framework for Comparing Conventional RAG, Iterative, and Multi-Agent Retrieval",
-  "author": "Ben Karlsberg <bkarlsberg3@gatech.edu>"
+  "sources": [
+    { "filename": "main.tex", "usage": "toplevel" }
+  ]
 }

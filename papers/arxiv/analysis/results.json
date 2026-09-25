@@ -1,0 +1,1850 @@
+{
+  "config": {
+    "n_bootstrap": 10000,
+    "seed": 42,
+    "ci": "percentile, 95%",
+    "runs": {
+      "unconstrained": "results/runs/live_hotpot150_unconstrained_20260915_042424",
+      "equal_retrieval": "results/runs/live_hotpot150_equal_retrieval_20260915_071431"
+    },
+    "dataset": "fixtures/datasets/hotpot_dev_slice_150.jsonl"
+  },
+  "dataset": {
+    "n": 153,
+    "mean_gold_answer_words": 2.475862068965517,
+    "categories": {
+      "multi_hop": 100,
+      "multi_passage": 30,
+      "single_hop": 15,
+      "unanswerable": 8
+    },
+    "hotpot_type_by_category": {
+      "multi_hop": {
+        "bridge": 100
+      },
+      "multi_passage": {
+        "comparison": 30
+      },
+      "single_hop": {
+        "comparison": 6,
+        "bridge": 9
+      },
+      "unanswerable": {
+        "None": 8
+      }
+    }
+  },
+  "overall": {
+    "unconstrained": {
+      "rag": {
+        "n": 153,
+        "em": 0.5098039215686274,
+        "em_ci95": [
+          0.43137254901960786,
+          0.5882352941176471
+        ],
+        "contains_gold": 0.5098039215686274,
+        "contains_gold_ci95": [
+          0.43137254901960786,
+          0.5882352941176471
+        ],
+        "soft_em": 0.0,
+        "f1": 0.09730090606947038,
+        "soft_f1": 0.27882998874286113,
+        "soft_f1_ci95": [
+          0.24187898221862647,
+          0.3160239000570087
+        ],
+        "abstention_correct": 0.8431372549019608,
+        "latency_ms": 809.2040291568659,
+        "tokens": 336.03921568627453,
+        "model_calls": 1.0,
+        "retrieval_calls": 1.0,
+        "unique_docs": 5.0,
+        "cost_usd": 0.00012612647058823527,
+        "latency_s_median": 0.7686942769996676,
+        "cost_usd_total": 0.019297349999999998,
+        "n_answerable": 145,
+        "em_answerable_only": 0.5379310344827586,
+        "abstain_rate_answerable": 0.16551724137931034,
+        "n_abstain_answerable": 24,
+        "n_abstain_no_retrieval_answerable": 0,
+        "n_abstain_unanswerable": 8,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.3658399263571677,
+        "all_support_titles": 0.4827586206896552,
+        "artifact_recall_at_k": 0.3658399263571677,
+        "mean_answer_words_non_abstained": 30.00826446280992,
+        "retrieval_calls_hist": {
+          "1": 153
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "abstain": 32,
+          "completed": 121
+        },
+        "n_em_ne_contains_gold": 0
+      },
+      "single_agent": {
+        "n": 153,
+        "em": 0.49673202614379086,
+        "em_ci95": [
+          0.41830065359477125,
+          0.5751633986928104
+        ],
+        "contains_gold": 0.49673202614379086,
+        "contains_gold_ci95": [
+          0.41830065359477125,
+          0.5751633986928104
+        ],
+        "soft_em": 0.0,
+        "f1": 0.0964662469474849,
+        "soft_f1": 0.2699161363692827,
+        "soft_f1_ci95": [
+          0.23272796419313205,
+          0.30748484259240894
+        ],
+        "abstention_correct": 0.7973856209150327,
+        "latency_ms": 22703.367196947715,
+        "tokens": 891.6143790849674,
+        "model_calls": 2.9869281045751634,
+        "retrieval_calls": 1.1633986928104576,
+        "unique_docs": 5.196078431372549,
+        "cost_usd": 0.00033446568627450976,
+        "latency_s_median": 19.785915495000154,
+        "cost_usd_total": 0.051173249999999997,
+        "n_answerable": 145,
+        "em_answerable_only": 0.5241379310344828,
+        "abstain_rate_answerable": 0.21379310344827587,
+        "n_abstain_answerable": 31,
+        "n_abstain_no_retrieval_answerable": 16,
+        "n_abstain_unanswerable": 8,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.38336045180872763,
+        "all_support_titles": 0.503448275862069,
+        "artifact_recall_at_k": 1.0,
+        "mean_answer_words_non_abstained": 33.05263157894737,
+        "retrieval_calls_hist": {
+          "0": 24,
+          "1": 101,
+          "2": 17,
+          "3": 5,
+          "4": 2,
+          "5": 4
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "abstain": 39,
+          "completed": 112,
+          "no_more_retrieval": 2
+        },
+        "n_em_ne_contains_gold": 0
+      },
+      "multi_agent": {
+        "n": 153,
+        "em": 0.6209150326797386,
+        "em_ci95": [
+          0.5424836601307189,
+          0.6928104575163399
+        ],
+        "contains_gold": 0.6209150326797386,
+        "contains_gold_ci95": [
+          0.5424836601307189,
+          0.6993464052287581
+        ],
+        "soft_em": 0.0,
+        "f1": 0.10743963299878359,
+        "soft_f1": 0.33276093905914605,
+        "soft_f1_ci95": [
+          0.29729280854394674,
+          0.3684168251625804
+        ],
+        "abstention_correct": 0.934640522875817,
+        "latency_ms": 43161.1603965817,
+        "tokens": 2743.529411764706,
+        "model_calls": 5.0,
+        "retrieval_calls": 3.0,
+        "unique_docs": 13.143790849673202,
+        "cost_usd": 0.001028935294117647,
+        "latency_s_median": 41.718471791999036,
+        "cost_usd_total": 0.1574271,
+        "n_answerable": 145,
+        "em_answerable_only": 0.6551724137931034,
+        "abstain_rate_answerable": 0.05517241379310345,
+        "n_abstain_answerable": 8,
+        "n_abstain_no_retrieval_answerable": 0,
+        "n_abstain_unanswerable": 6,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.6407535950639399,
+        "all_support_titles": 0.7655172413793103,
+        "artifact_recall_at_k": 0.6407535950639399,
+        "mean_answer_words_non_abstained": 33.65467625899281,
+        "retrieval_calls_hist": {
+          "3": 153
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "completed": 139,
+          "abstain": 14
+        },
+        "n_em_ne_contains_gold": 0
+      }
+    },
+    "equal_retrieval": {
+      "rag": {
+        "n": 153,
+        "em": 0.5032679738562091,
+        "em_ci95": [
+          0.42483660130718953,
+          0.5816993464052288
+        ],
+        "contains_gold": 0.5032679738562091,
+        "contains_gold_ci95": [
+          0.42483660130718953,
+          0.5816993464052288
+        ],
+        "soft_em": 0.0,
+        "f1": 0.09669495178301447,
+        "soft_f1": 0.2760914313158402,
+        "soft_f1_ci95": [
+          0.23934157209086732,
+          0.31390859529823045
+        ],
+        "abstention_correct": 0.8496732026143791,
+        "latency_ms": 8571.692898803769,
+        "tokens": 336.62745098039215,
+        "model_calls": 1.0,
+        "retrieval_calls": 1.0,
+        "unique_docs": 5.0,
+        "cost_usd": 0.00012635,
+        "latency_s_median": 9.519384193998121,
+        "cost_usd_total": 0.01933155,
+        "n_answerable": 145,
+        "em_answerable_only": 0.5310344827586206,
+        "abstain_rate_answerable": 0.15862068965517243,
+        "n_abstain_answerable": 23,
+        "n_abstain_no_retrieval_answerable": 0,
+        "n_abstain_unanswerable": 8,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.3658399263571677,
+        "all_support_titles": 0.4827586206896552,
+        "artifact_recall_at_k": 0.3658399263571677,
+        "mean_answer_words_non_abstained": 30.278688524590162,
+        "retrieval_calls_hist": {
+          "1": 153
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "abstain": 31,
+          "completed": 122
+        },
+        "n_em_ne_contains_gold": 0
+      },
+      "single_agent": {
+        "n": 153,
+        "em": 0.5163398692810458,
+        "em_ci95": [
+          0.43790849673202614,
+          0.5947712418300654
+        ],
+        "contains_gold": 0.5098039215686274,
+        "contains_gold_ci95": [
+          0.43137254901960786,
+          0.5882352941176471
+        ],
+        "soft_em": 0.0,
+        "f1": 0.09767836428613742,
+        "soft_f1": 0.277015924748404,
+        "soft_f1_ci95": [
+          0.23940212458589516,
+          0.31506566146506126
+        ],
+        "abstention_correct": 0.803921568627451,
+        "latency_ms": 25423.042607549098,
+        "tokens": 859.1699346405229,
+        "model_calls": 2.934640522875817,
+        "retrieval_calls": 1.1176470588235294,
+        "unique_docs": 5.261437908496732,
+        "cost_usd": 0.00032230784313725487,
+        "latency_s_median": 28.226936050003133,
+        "cost_usd_total": 0.0493131,
+        "n_answerable": 145,
+        "em_answerable_only": 0.5448275862068965,
+        "abstain_rate_answerable": 0.20689655172413793,
+        "n_abstain_answerable": 30,
+        "n_abstain_no_retrieval_answerable": 16,
+        "n_abstain_unanswerable": 8,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.38974523560730456,
+        "all_support_titles": 0.5172413793103449,
+        "artifact_recall_at_k": 1.0,
+        "mean_answer_words_non_abstained": 32.469565217391306,
+        "retrieval_calls_hist": {
+          "0": 24,
+          "1": 100,
+          "2": 16,
+          "3": 13
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "abstain": 38,
+          "completed": 108,
+          "no_more_retrieval": 6,
+          "budget_docs": 1
+        },
+        "n_em_ne_contains_gold": 1
+      },
+      "multi_agent": {
+        "n": 153,
+        "em": 0.6209150326797386,
+        "em_ci95": [
+          0.5424836601307189,
+          0.6928104575163399
+        ],
+        "contains_gold": 0.6209150326797386,
+        "contains_gold_ci95": [
+          0.5424836601307189,
+          0.6928104575163399
+        ],
+        "soft_em": 0.0,
+        "f1": 0.10475049737616747,
+        "soft_f1": 0.33274431873345717,
+        "soft_f1_ci95": [
+          0.2972499409774202,
+          0.36801200064071704
+        ],
+        "abstention_correct": 0.9477124183006536,
+        "latency_ms": 43183.51189181042,
+        "tokens": 2732.346405228758,
+        "model_calls": 5.0,
+        "retrieval_calls": 3.0,
+        "unique_docs": 13.058823529411764,
+        "cost_usd": 0.00102473431372549,
+        "latency_s_median": 41.755909120998695,
+        "cost_usd_total": 0.15678435,
+        "n_answerable": 145,
+        "em_answerable_only": 0.6551724137931034,
+        "abstain_rate_answerable": 0.041379310344827586,
+        "n_abstain_answerable": 6,
+        "n_abstain_no_retrieval_answerable": 0,
+        "n_abstain_unanswerable": 6,
+        "n_unanswerable": 8,
+        "evidence_recall": 0.6329569089913917,
+        "all_support_titles": 0.7724137931034483,
+        "artifact_recall_at_k": 0.6329569089913917,
+        "mean_answer_words_non_abstained": 33.50354609929078,
+        "retrieval_calls_hist": {
+          "3": 153
+        },
+        "n_errors": 0,
+        "stop_reasons": {
+          "completed": 141,
+          "abstain": 12
+        },
+        "n_em_ne_contains_gold": 0
+      }
+    }
+  },
+  "by_category": {
+    "unconstrained": {
+      "rag": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.46,
+          "em_ci95": [
+            0.36,
+            0.56
+          ],
+          "contains_gold": 0.46,
+          "contains_gold_ci95": [
+            0.36,
+            0.56
+          ],
+          "soft_em": 0.0,
+          "f1": 0.106414007905052,
+          "soft_f1": 0.2550822699909417,
+          "soft_f1_ci95": [
+            0.20967390890514373,
+            0.30049273730383846
+          ],
+          "abstention_correct": 0.81,
+          "latency_ms": 796.2823929699973,
+          "tokens": 339.76,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00012751349999999998,
+          "latency_s_median": 0.7298069430003125,
+          "cost_usd_total": 0.012751349999999998,
+          "n_answerable": 100,
+          "em_answerable_only": 0.46,
+          "abstain_rate_answerable": 0.19,
+          "n_abstain_answerable": 19,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.33347438672438673,
+          "all_support_titles": 0.41,
+          "artifact_recall_at_k": 0.33347438672438673,
+          "mean_answer_words_non_abstained": 28.02469135802469,
+          "retrieval_calls_hist": {
+            "1": 100
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 19,
+            "completed": 81
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.7333333333333333,
+          "em_ci95": [
+            0.5666666666666667,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.7333333333333333,
+          "contains_gold_ci95": [
+            0.5666666666666667,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.08500846185844207,
+          "soft_f1": 0.3811743162620355,
+          "soft_f1_ci95": [
+            0.30533108866442205,
+            0.45
+          ],
+          "abstention_correct": 0.8333333333333334,
+          "latency_ms": 910.2033758666645,
+          "tokens": 336.23333333333335,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00012621499999999997,
+          "latency_s_median": 0.8348895135000021,
+          "cost_usd_total": 0.00378645,
+          "n_answerable": 30,
+          "em_answerable_only": 0.7333333333333333,
+          "abstain_rate_answerable": 0.16666666666666666,
+          "n_abstain_answerable": 5,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.3941137566137566,
+          "all_support_titles": 0.6666666666666666,
+          "artifact_recall_at_k": 0.3941137566137566,
+          "mean_answer_words_non_abstained": 35.72,
+          "retrieval_calls_hist": {
+            "1": 30
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 25,
+            "abstain": 5
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.6666666666666666,
+          "em_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.6666666666666666,
+          "contains_gold_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.11302559882470023,
+          "soft_f1": 0.38116878604683485,
+          "soft_f1_ci95": [
+            0.2811687860468348,
+            0.4666666666666667
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 859.9313203999676,
+          "tokens": 339.26666666666665,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00012735999999999997,
+          "latency_s_median": 0.8901140020007006,
+          "cost_usd_total": 0.0019103999999999998,
+          "n_answerable": 15,
+          "em_answerable_only": 0.6666666666666666,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.5250625300625301,
+          "all_support_titles": 0.6,
+          "artifact_recall_at_k": 0.5250625300625301,
+          "mean_answer_words_non_abstained": 31.2,
+          "retrieval_calls_hist": {
+            "1": 15
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 15
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 496.8632602501657,
+          "tokens": 282.75,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00010614374999999999,
+          "latency_s_median": 0.5049242830004914,
+          "cost_usd_total": 0.0008491499999999999,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 8,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 0.0,
+          "retrieval_calls_hist": {
+            "1": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 8
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      },
+      "single_agent": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.47,
+          "em_ci95": [
+            0.37,
+            0.57
+          ],
+          "contains_gold": 0.47,
+          "contains_gold_ci95": [
+            0.37,
+            0.57
+          ],
+          "soft_em": 0.0,
+          "f1": 0.10804052393187899,
+          "soft_f1": 0.25826637641337447,
+          "soft_f1_ci95": [
+            0.2121059530692341,
+            0.3037075225715379
+          ],
+          "abstention_correct": 0.78,
+          "latency_ms": 24659.150937469887,
+          "tokens": 989.45,
+          "model_calls": 3.17,
+          "retrieval_calls": 1.29,
+          "unique_docs": 5.63,
+          "cost_usd": 0.0003711584999999999,
+          "latency_s_median": 27.922773235500244,
+          "cost_usd_total": 0.03711585,
+          "n_answerable": 100,
+          "em_answerable_only": 0.47,
+          "abstain_rate_answerable": 0.22,
+          "n_abstain_answerable": 22,
+          "n_abstain_no_retrieval_answerable": 8,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.36896248196248194,
+          "all_support_titles": 0.48,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 30.333333333333332,
+          "retrieval_calls_hist": {
+            "0": 8,
+            "1": 73,
+            "2": 10,
+            "3": 4,
+            "4": 1,
+            "5": 4
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 22,
+            "completed": 76,
+            "no_more_retrieval": 2
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.7,
+          "em_ci95": [
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.7,
+          "contains_gold_ci95": [
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.07715094371740698,
+          "soft_f1": 0.3661117245327772,
+          "soft_f1_ci95": [
+            0.2893174661595715,
+            0.43636685682738313
+          ],
+          "abstention_correct": 0.8333333333333334,
+          "latency_ms": 22940.218256866898,
+          "tokens": 902.7666666666667,
+          "model_calls": 3.066666666666667,
+          "retrieval_calls": 1.2,
+          "unique_docs": 5.566666666666666,
+          "cost_usd": 0.00033864999999999996,
+          "latency_s_median": 24.080224322499816,
+          "cost_usd_total": 0.010159499999999998,
+          "n_answerable": 30,
+          "em_answerable_only": 0.7,
+          "abstain_rate_answerable": 0.16666666666666666,
+          "n_abstain_answerable": 5,
+          "n_abstain_no_retrieval_answerable": 4,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.3869576719576719,
+          "all_support_titles": 0.5,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 43.28,
+          "retrieval_calls_hist": {
+            "0": 4,
+            "1": 19,
+            "2": 5,
+            "3": 1,
+            "4": 1
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 25,
+            "abstain": 5
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.5333333333333333,
+          "em_ci95": [
+            0.26666666666666666,
+            0.8
+          ],
+          "contains_gold": 0.5333333333333333,
+          "contains_gold_ci95": [
+            0.26666666666666666,
+            0.8
+          ],
+          "soft_em": 0.0,
+          "f1": 0.10938367188367189,
+          "soft_f1": 0.2991452991452991,
+          "soft_f1_ci95": [
+            0.1769230769230769,
+            0.4102564102564103
+          ],
+          "abstention_correct": 0.7333333333333333,
+          "latency_ms": 16938.70546493369,
+          "tokens": 651.9333333333333,
+          "model_calls": 2.6,
+          "retrieval_calls": 0.8666666666666667,
+          "unique_docs": 4.333333333333333,
+          "cost_usd": 0.00024458,
+          "latency_s_median": 17.890051180000228,
+          "cost_usd_total": 0.0036686999999999996,
+          "n_answerable": 15,
+          "em_answerable_only": 0.5333333333333333,
+          "abstain_rate_answerable": 0.26666666666666666,
+          "n_abstain_answerable": 4,
+          "n_abstain_no_retrieval_answerable": 4,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.47215247715247705,
+          "all_support_titles": 0.6666666666666666,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 29.09090909090909,
+          "retrieval_calls_hist": {
+            "0": 4,
+            "1": 9,
+            "2": 2
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 11,
+            "abstain": 4
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 8176.61971324992,
+          "tokens": 76.25,
+          "model_calls": 1.125,
+          "retrieval_calls": 0.0,
+          "unique_docs": 0.0,
+          "cost_usd": 2.8650000000000002e-05,
+          "latency_s_median": 9.137964251000085,
+          "cost_usd_total": 0.00022920000000000001,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 8,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 0.0,
+          "retrieval_calls_hist": {
+            "0": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 8
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      },
+      "multi_agent": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.58,
+          "em_ci95": [
+            0.48,
+            0.68
+          ],
+          "contains_gold": 0.58,
+          "contains_gold_ci95": [
+            0.48,
+            0.68
+          ],
+          "soft_em": 0.0,
+          "f1": 0.1168305684120468,
+          "soft_f1": 0.31107630710730066,
+          "soft_f1_ci95": [
+            0.2657956703525291,
+            0.35529293992567684
+          ],
+          "abstention_correct": 0.92,
+          "latency_ms": 43343.299744719996,
+          "tokens": 2763.49,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 12.89,
+          "cost_usd": 0.001036419,
+          "latency_s_median": 41.53135304300031,
+          "cost_usd_total": 0.1036419,
+          "n_answerable": 100,
+          "em_answerable_only": 0.58,
+          "abstain_rate_answerable": 0.08,
+          "n_abstain_answerable": 8,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.5706695526695525,
+          "all_support_titles": 0.7,
+          "artifact_recall_at_k": 0.5706695526695525,
+          "mean_answer_words_non_abstained": 31.141304347826086,
+          "retrieval_calls_hist": {
+            "3": 100
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 92,
+            "abstain": 8
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.8666666666666667,
+          "em_ci95": [
+            0.7333333333333333,
+            0.9666666666666667
+          ],
+          "contains_gold": 0.8666666666666667,
+          "contains_gold_ci95": [
+            0.7333333333333333,
+            0.9666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.09009158970442827,
+          "soft_f1": 0.44950524459296387,
+          "soft_f1_ci95": [
+            0.39901048918592774,
+            0.48827160493827165
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 43290.36658819987,
+          "tokens": 2747.866666666667,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 14.0,
+          "cost_usd": 0.0010305849999999999,
+          "latency_s_median": 42.23415410099915,
+          "cost_usd_total": 0.03091755,
+          "n_answerable": 30,
+          "em_answerable_only": 0.8666666666666667,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.8261111111111111,
+          "all_support_titles": 0.9666666666666667,
+          "artifact_recall_at_k": 0.8261111111111111,
+          "mean_answer_words_non_abstained": 42.833333333333336,
+          "retrieval_calls_hist": {
+            "3": 30
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 30
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.7333333333333333,
+          "em_ci95": [
+            0.5333333333333333,
+            0.9333333333333333
+          ],
+          "contains_gold": 0.7333333333333333,
+          "contains_gold_ci95": [
+            0.4666666666666667,
+            0.9333333333333333
+          ],
+          "soft_em": 0.0,
+          "f1": 0.13683062109842412,
+          "soft_f1": 0.42130904183535756,
+          "soft_f1_ci95": [
+            0.33384615384615385,
+            0.48771929824561405
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 41809.32612213353,
+          "tokens": 2668.133333333333,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 12.533333333333333,
+          "cost_usd": 0.00100064,
+          "latency_s_median": 41.771847989999515,
+          "cost_usd_total": 0.015009599999999998,
+          "n_answerable": 15,
+          "em_answerable_only": 0.7333333333333333,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.7372655122655122,
+          "all_support_titles": 0.8,
+          "artifact_recall_at_k": 0.7372655122655122,
+          "mean_answer_words_non_abstained": 31.666666666666668,
+          "retrieval_calls_hist": {
+            "3": 15
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 15
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 0.75,
+          "latency_ms": 42934.584590875376,
+          "tokens": 2619.125,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 14.25,
+          "cost_usd": 0.0009822562499999998,
+          "latency_s_median": 41.079331843000546,
+          "cost_usd_total": 0.00785805,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 6,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 26.5,
+          "retrieval_calls_hist": {
+            "3": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 6,
+            "completed": 2
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      }
+    },
+    "equal_retrieval": {
+      "rag": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.45,
+          "em_ci95": [
+            0.35,
+            0.55
+          ],
+          "contains_gold": 0.45,
+          "contains_gold_ci95": [
+            0.35,
+            0.55
+          ],
+          "soft_em": 0.0,
+          "f1": 0.10354781396193696,
+          "soft_f1": 0.2508922771275996,
+          "soft_f1_ci95": [
+            0.2055978905397927,
+            0.2968211853659721
+          ],
+          "abstention_correct": 0.82,
+          "latency_ms": 8730.754347709662,
+          "tokens": 340.76,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.000127893,
+          "latency_s_median": 9.52266346649958,
+          "cost_usd_total": 0.012789299999999998,
+          "n_answerable": 100,
+          "em_answerable_only": 0.45,
+          "abstain_rate_answerable": 0.18,
+          "n_abstain_answerable": 18,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.33347438672438673,
+          "all_support_titles": 0.41,
+          "artifact_recall_at_k": 0.33347438672438673,
+          "mean_answer_words_non_abstained": 28.4390243902439,
+          "retrieval_calls_hist": {
+            "1": 100
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 18,
+            "completed": 82
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.7333333333333333,
+          "em_ci95": [
+            0.5666666666666667,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.7333333333333333,
+          "contains_gold_ci95": [
+            0.5666666666666667,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.08374330165550727,
+          "soft_f1": 0.3811743162620355,
+          "soft_f1_ci95": [
+            0.3053290950440073,
+            0.44927048260381597
+          ],
+          "abstention_correct": 0.8333333333333334,
+          "latency_ms": 8450.743995433731,
+          "tokens": 336.3333333333333,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00012625999999999997,
+          "latency_s_median": 9.513075099999696,
+          "cost_usd_total": 0.0037877999999999996,
+          "n_answerable": 30,
+          "em_answerable_only": 0.7333333333333333,
+          "abstain_rate_answerable": 0.16666666666666666,
+          "n_abstain_answerable": 5,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.3941137566137566,
+          "all_support_titles": 0.6666666666666666,
+          "artifact_recall_at_k": 0.3941137566137566,
+          "mean_answer_words_non_abstained": 36.48,
+          "retrieval_calls_hist": {
+            "1": 30
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 25,
+            "abstain": 5
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.6666666666666666,
+          "em_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.6666666666666666,
+          "contains_gold_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.1284831451294866,
+          "soft_f1": 0.38116878604683485,
+          "soft_f1_ci95": [
+            0.27891737891737894,
+            0.4666666666666667
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 8512.021995933415,
+          "tokens": 338.4,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00012702,
+          "latency_s_median": 9.524015797000175,
+          "cost_usd_total": 0.0019052999999999997,
+          "n_answerable": 15,
+          "em_answerable_only": 0.6666666666666666,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.5250625300625301,
+          "all_support_titles": 0.6,
+          "artifact_recall_at_k": 0.5250625300625301,
+          "mean_answer_words_non_abstained": 30.0,
+          "retrieval_calls_hist": {
+            "1": 15
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 15
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 7148.86611799966,
+          "tokens": 282.75,
+          "model_calls": 1.0,
+          "retrieval_calls": 1.0,
+          "unique_docs": 5.0,
+          "cost_usd": 0.00010614374999999999,
+          "latency_s_median": 9.271086695000122,
+          "cost_usd_total": 0.0008491499999999999,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 8,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 0.0,
+          "retrieval_calls_hist": {
+            "1": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 8
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      },
+      "single_agent": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.49,
+          "em_ci95": [
+            0.39,
+            0.59
+          ],
+          "contains_gold": 0.48,
+          "contains_gold_ci95": [
+            0.38,
+            0.58
+          ],
+          "soft_em": 0.0,
+          "f1": 0.10630677321666182,
+          "soft_f1": 0.26386714787152526,
+          "soft_f1_ci95": [
+            0.21950588814380048,
+            0.3108492007946418
+          ],
+          "abstention_correct": 0.79,
+          "latency_ms": 26317.745871520052,
+          "tokens": 960.51,
+          "model_calls": 3.12,
+          "retrieval_calls": 1.25,
+          "unique_docs": 5.83,
+          "cost_usd": 0.00036031499999999994,
+          "latency_s_median": 28.205397895000715,
+          "cost_usd_total": 0.036031499999999994,
+          "n_answerable": 100,
+          "em_answerable_only": 0.49,
+          "abstain_rate_answerable": 0.21,
+          "n_abstain_answerable": 21,
+          "n_abstain_no_retrieval_answerable": 8,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.37343470418470415,
+          "all_support_titles": 0.48,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 29.60759493670886,
+          "retrieval_calls_hist": {
+            "0": 8,
+            "1": 70,
+            "2": 11,
+            "3": 11
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 21,
+            "completed": 73,
+            "no_more_retrieval": 5,
+            "budget_docs": 1
+          },
+          "n_em_ne_contains_gold": 1
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.7,
+          "em_ci95": [
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.7,
+          "contains_gold_ci95": [
+            0.5333333333333333,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.07906140614475372,
+          "soft_f1": 0.3664291848502375,
+          "soft_f1_ci95": [
+            0.28915645757751024,
+            0.4380952380952381
+          ],
+          "abstention_correct": 0.8333333333333334,
+          "latency_ms": 27398.590634066808,
+          "tokens": 859.6333333333333,
+          "model_calls": 3.0,
+          "retrieval_calls": 1.1333333333333333,
+          "unique_docs": 5.4,
+          "cost_usd": 0.00032248999999999993,
+          "latency_s_median": 28.547656621001806,
+          "cost_usd_total": 0.0096747,
+          "n_answerable": 30,
+          "em_answerable_only": 0.7,
+          "abstain_rate_answerable": 0.16666666666666666,
+          "n_abstain_answerable": 5,
+          "n_abstain_no_retrieval_answerable": 4,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.3845767195767195,
+          "all_support_titles": 0.5333333333333333,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 43.84,
+          "retrieval_calls_hist": {
+            "0": 4,
+            "1": 20,
+            "2": 4,
+            "3": 2
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 24,
+            "abstain": 5,
+            "no_more_retrieval": 1
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.6,
+          "em_ci95": [
+            0.3333333333333333,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.6,
+          "contains_gold_ci95": [
+            0.3333333333333333,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.12948468198468197,
+          "soft_f1": 0.3335897435897435,
+          "soft_f1_ci95": [
+            0.2135897435897436,
+            0.4335961538461538
+          ],
+          "abstention_correct": 0.7333333333333333,
+          "latency_ms": 23436.595636000373,
+          "tokens": 600.2,
+          "model_calls": 2.533333333333333,
+          "retrieval_calls": 0.8,
+          "unique_docs": 4.0,
+          "cost_usd": 0.00022517999999999998,
+          "latency_s_median": 28.088946134001162,
+          "cost_usd_total": 0.0033776999999999995,
+          "n_answerable": 15,
+          "em_answerable_only": 0.6,
+          "abstain_rate_answerable": 0.26666666666666666,
+          "n_abstain_answerable": 4,
+          "n_abstain_no_retrieval_answerable": 4,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.5088191438191437,
+          "all_support_titles": 0.7333333333333333,
+          "artifact_recall_at_k": 1.0,
+          "mean_answer_words_non_abstained": 27.181818181818183,
+          "retrieval_calls_hist": {
+            "0": 4,
+            "1": 10,
+            "2": 1
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 4,
+            "completed": 11
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 10555.534780124617,
+          "tokens": 76.25,
+          "model_calls": 1.125,
+          "retrieval_calls": 0.0,
+          "unique_docs": 0.0,
+          "cost_usd": 2.8650000000000002e-05,
+          "latency_s_median": 9.314819254999747,
+          "cost_usd_total": 0.00022920000000000001,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 8,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 0.0,
+          "retrieval_calls_hist": {
+            "0": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 8
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      },
+      "multi_agent": {
+        "multi_hop": {
+          "n": 100,
+          "em": 0.58,
+          "em_ci95": [
+            0.48,
+            0.67
+          ],
+          "contains_gold": 0.58,
+          "contains_gold_ci95": [
+            0.48,
+            0.67
+          ],
+          "soft_em": 0.0,
+          "f1": 0.1114090535177797,
+          "soft_f1": 0.31027271524213246,
+          "soft_f1_ci95": [
+            0.2659131328577545,
+            0.3556866481413771
+          ],
+          "abstention_correct": 0.94,
+          "latency_ms": 43451.53614016985,
+          "tokens": 2754.87,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 12.79,
+          "cost_usd": 0.001033191,
+          "latency_s_median": 41.772671483498925,
+          "cost_usd_total": 0.10331909999999998,
+          "n_answerable": 100,
+          "em_answerable_only": 0.58,
+          "abstain_rate_answerable": 0.06,
+          "n_abstain_answerable": 6,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.5620786435786435,
+          "all_support_titles": 0.7,
+          "artifact_recall_at_k": 0.5620786435786435,
+          "mean_answer_words_non_abstained": 31.48936170212766,
+          "retrieval_calls_hist": {
+            "3": 100
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 94,
+            "abstain": 6
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "multi_passage": {
+          "n": 30,
+          "em": 0.9,
+          "em_ci95": [
+            0.7666666666666667,
+            1.0
+          ],
+          "contains_gold": 0.9,
+          "contains_gold_ci95": [
+            0.7666666666666667,
+            1.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.09481706847429047,
+          "soft_f1": 0.4625987270914807,
+          "soft_f1_ci95": [
+            0.41550878000153363,
+            0.5
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 43670.88749290026,
+          "tokens": 2736.3,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 14.033333333333333,
+          "cost_usd": 0.001026195,
+          "latency_s_median": 42.18025335249877,
+          "cost_usd_total": 0.030785849999999997,
+          "n_answerable": 30,
+          "em_answerable_only": 0.9,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.817063492063492,
+          "all_support_titles": 1.0,
+          "artifact_recall_at_k": 0.817063492063492,
+          "mean_answer_words_non_abstained": 41.333333333333336,
+          "retrieval_calls_hist": {
+            "3": 30
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 30
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "single_hop": {
+          "n": 15,
+          "em": 0.6666666666666666,
+          "em_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "contains_gold": 0.6666666666666666,
+          "contains_gold_ci95": [
+            0.4,
+            0.8666666666666667
+          ],
+          "soft_em": 0.0,
+          "f1": 0.13609391283646258,
+          "soft_f1": 0.400309828617419,
+          "soft_f1_ci95": [
+            0.3136084628444561,
+            0.4754385964912281
+          ],
+          "abstention_correct": 1.0,
+          "latency_ms": 41731.756151133115,
+          "tokens": 2627.4,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 12.266666666666667,
+          "cost_usd": 0.00098538,
+          "latency_s_median": 40.94944099499844,
+          "cost_usd_total": 0.014780699999999999,
+          "n_answerable": 15,
+          "em_answerable_only": 0.6666666666666666,
+          "abstain_rate_answerable": 0.0,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 0,
+          "n_unanswerable": 0,
+          "evidence_recall": 0.7372655122655122,
+          "all_support_titles": 0.8,
+          "artifact_recall_at_k": 0.7372655122655122,
+          "mean_answer_words_non_abstained": 31.4,
+          "retrieval_calls_hist": {
+            "3": 15
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "completed": 15
+          },
+          "n_em_ne_contains_gold": 0
+        },
+        "unanswerable": {
+          "n": 8,
+          "em": 0.0,
+          "em_ci95": [
+            0.0,
+            0.0
+          ],
+          "contains_gold": 0.0,
+          "contains_gold_ci95": [
+            0.0,
+            0.0
+          ],
+          "soft_em": 0.0,
+          "f1": 0.0,
+          "soft_f1": 0.0,
+          "soft_f1_ci95": [
+            0.0,
+            0.0
+          ],
+          "abstention_correct": 0.75,
+          "latency_ms": 40727.59229700068,
+          "tokens": 2632.75,
+          "model_calls": 5.0,
+          "retrieval_calls": 3.0,
+          "unique_docs": 14.25,
+          "cost_usd": 0.0009873374999999998,
+          "latency_s_median": 41.02210131249922,
+          "cost_usd_total": 0.0078987,
+          "n_answerable": 0,
+          "em_answerable_only": null,
+          "abstain_rate_answerable": null,
+          "n_abstain_answerable": 0,
+          "n_abstain_no_retrieval_answerable": 0,
+          "n_abstain_unanswerable": 6,
+          "n_unanswerable": 8,
+          "mean_answer_words_non_abstained": 26.5,
+          "retrieval_calls_hist": {
+            "3": 8
+          },
+          "n_errors": 0,
+          "stop_reasons": {
+            "abstain": 6,
+            "completed": 2
+          },
+          "n_em_ne_contains_gold": 0
+        }
+      }
+    }
+  },
+  "paired": {
+    "unconstrained": {
+      "multi_agent-rag": {
+        "em": {
+          "mean_diff": 0.1111111111111111,
+          "ci95": [
+            0.058823529411764705,
+            0.16339869281045752
+          ],
+          "n": 153,
+          "a_only_correct": 18,
+          "b_only_correct": 1
+        },
+        "soft_f1": {
+          "mean_diff": 0.05393095031628489,
+          "ci95": [
+            0.029496045456521246,
+            0.08028257767590391
+          ],
+          "n": 153
+        }
+      },
+      "single_agent-rag": {
+        "em": {
+          "mean_diff": -0.013071895424836602,
+          "ci95": [
+            -0.06535947712418301,
+            0.0392156862745098
+          ],
+          "n": 153,
+          "a_only_correct": 7,
+          "b_only_correct": 9
+        },
+        "soft_f1": {
+          "mean_diff": -0.008913852373578517,
+          "ci95": [
+            -0.034260421788993925,
+            0.016177619677259576
+          ],
+          "n": 153
+        }
+      },
+      "multi_agent-single_agent": {
+        "em": {
+          "mean_diff": 0.12418300653594772,
+          "ci95": [
+            0.06535947712418301,
+            0.1830065359477124
+          ],
+          "n": 153,
+          "a_only_correct": 22,
+          "b_only_correct": 3
+        },
+        "soft_f1": {
+          "mean_diff": 0.06284480268986341,
+          "ci95": [
+            0.03408642675739151,
+            0.09326627640103129
+          ],
+          "n": 153
+        }
+      }
+    },
+    "equal_retrieval": {
+      "multi_agent-rag": {
+        "em": {
+          "mean_diff": 0.11764705882352941,
+          "ci95": [
+            0.0718954248366013,
+            0.16993464052287582
+          ],
+          "n": 153,
+          "a_only_correct": 18,
+          "b_only_correct": 0
+        },
+        "soft_f1": {
+          "mean_diff": 0.05665288741761701,
+          "ci95": [
+            0.03374598674155625,
+            0.08159072824577736
+          ],
+          "n": 153
+        }
+      },
+      "single_agent-rag": {
+        "em": {
+          "mean_diff": 0.013071895424836602,
+          "ci95": [
+            -0.0392156862745098,
+            0.06535947712418301
+          ],
+          "n": 153,
+          "a_only_correct": 10,
+          "b_only_correct": 8
+        },
+        "soft_f1": {
+          "mean_diff": 0.0009244934325637775,
+          "ci95": [
+            -0.024767606874128104,
+            0.0275196487830831
+          ],
+          "n": 153
+        }
+      },
+      "multi_agent-single_agent": {
+        "em": {
+          "mean_diff": 0.10457516339869281,
+          "ci95": [
+            0.0392156862745098,
+            0.16993464052287582
+          ],
+          "n": 153,
+          "a_only_correct": 22,
+          "b_only_correct": 6
+        },
+        "soft_f1": {
+          "mean_diff": 0.055728393985053234,
+          "ci95": [
+            0.025884835867320873,
+            0.08663966501744927
+          ],
+          "n": 153
+        }
+      }
+    }
+  },
+  "paired_by_category": {
+    "unconstrained": {
+      "multi_hop": {
+        "multi_agent-rag": {
+          "mean_diff": 0.12,
+          "ci95": [
+            0.05,
+            0.19
+          ],
+          "n": 100,
+          "a_only_correct": 13,
+          "b_only_correct": 1
+        },
+        "single_agent-rag": {
+          "mean_diff": 0.01,
+          "ci95": [
+            -0.05,
+            0.07024999999999637
+          ],
+          "n": 100,
+          "a_only_correct": 6,
+          "b_only_correct": 5
+        }
+      },
+      "multi_passage": {
+        "multi_agent-rag": {
+          "mean_diff": 0.13333333333333333,
+          "ci95": [
+            0.03333333333333333,
+            0.26666666666666666
+          ],
+          "n": 30,
+          "a_only_correct": 4,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": -0.03333333333333333,
+          "ci95": [
+            -0.16666666666666666,
+            0.06666666666666667
+          ],
+          "n": 30,
+          "a_only_correct": 1,
+          "b_only_correct": 2
+        }
+      },
+      "single_hop": {
+        "multi_agent-rag": {
+          "mean_diff": 0.06666666666666667,
+          "ci95": [
+            0.0,
+            0.2
+          ],
+          "n": 15,
+          "a_only_correct": 1,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": -0.13333333333333333,
+          "ci95": [
+            -0.3333333333333333,
+            0.0
+          ],
+          "n": 15,
+          "a_only_correct": 0,
+          "b_only_correct": 2
+        }
+      },
+      "unanswerable": {
+        "multi_agent-rag": {
+          "mean_diff": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "n": 8,
+          "a_only_correct": 0,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "n": 8,
+          "a_only_correct": 0,
+          "b_only_correct": 0
+        }
+      }
+    },
+    "equal_retrieval": {
+      "multi_hop": {
+        "multi_agent-rag": {
+          "mean_diff": 0.13,
+          "ci95": [
+            0.07,
+            0.2
+          ],
+          "n": 100,
+          "a_only_correct": 13,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": 0.04,
+          "ci95": [
+            -0.03,
+            0.11
+          ],
+          "n": 100,
+          "a_only_correct": 8,
+          "b_only_correct": 4
+        }
+      },
+      "multi_passage": {
+        "multi_agent-rag": {
+          "mean_diff": 0.16666666666666666,
+          "ci95": [
+            0.03333333333333333,
+            0.3
+          ],
+          "n": 30,
+          "a_only_correct": 5,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": -0.03333333333333333,
+          "ci95": [
+            -0.13333333333333333,
+            0.06666666666666667
+          ],
+          "n": 30,
+          "a_only_correct": 1,
+          "b_only_correct": 2
+        }
+      },
+      "single_hop": {
+        "multi_agent-rag": {
+          "mean_diff": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "n": 15,
+          "a_only_correct": 0,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": -0.06666666666666667,
+          "ci95": [
+            -0.26666666666666666,
+            0.13333333333333333
+          ],
+          "n": 15,
+          "a_only_correct": 1,
+          "b_only_correct": 2
+        }
+      },
+      "unanswerable": {
+        "multi_agent-rag": {
+          "mean_diff": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "n": 8,
+          "a_only_correct": 0,
+          "b_only_correct": 0
+        },
+        "single_agent-rag": {
+          "mean_diff": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "n": 8,
+          "a_only_correct": 0,
+          "b_only_correct": 0
+        }
+      }
+    }
+  },
+  "cross_mode_agreement_em": {
+    "rag": 0.9934640522875817,
+    "single_agent": 0.9673202614379085,
+    "multi_agent": 0.9738562091503268
+  }
+}
