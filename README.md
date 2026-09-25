@@ -36,6 +36,9 @@ python scripts/run_experiment.py --config configs/experiments/offline_fixture_co
 python scripts/generate_report.py --run-dir results/runs/latest
 ```
 
+`results/runs/latest` is a local, untracked pointer file written by each run (next to the
+run directory) containing the path of the most recent run; `generate_report.py` follows it.
+
 ## Package layout
 
 ```

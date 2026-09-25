@@ -24,3 +24,6 @@ def test_offline_experiment_smoke(tmp_path: Path):
     assert (out / "results_rag.json").exists()
     data = json.loads((out / "comparison.json").read_text(encoding="utf-8"))
     assert len(data) == 3
+    # The "latest" pointer lives next to the run dir, not in the repo's results/runs
+    latest = tmp_path / "latest"
+    assert latest.read_text(encoding="utf-8") == str(out.resolve())

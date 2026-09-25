@@ -15,7 +15,8 @@ venv/
 .coverage
 htmlcov/
 
-# Ignore ad-hoc local runs, but keep the checked-in offline fixture and live runs
+# Ignore ad-hoc local runs (and the machine-local results/runs/latest pointer),
+# but keep the checked-in offline fixture and live runs
 results/runs/*
 !results/runs/.gitkeep
 !results/runs/offline_fixture_compare_20260915_024627/
@@ -23,7 +24,6 @@ results/runs/*
 !results/runs/live_gpt4o_mini_compare_20260915_035757/
 !results/runs/live_hotpot150_unconstrained_20260915_042424/
 !results/runs/live_hotpot150_equal_retrieval_20260915_071431/
-!results/runs/latest
 
 results/traces/*
 !results/traces/.gitkeep

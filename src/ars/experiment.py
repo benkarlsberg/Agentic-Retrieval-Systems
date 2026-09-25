@@ -185,8 +185,10 @@ def run_from_config(config_path: Path, output_dir: Path | None = None) -> dict[s
         meta["response_models"] = sorted(served_models)
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    # latest symlink-like pointer
-    latest = REPO_ROOT / "results" / "runs" / "latest"
-    latest.write_text(str(out), encoding="utf-8")
+    # "latest" symlink-like pointer, written next to the run directory (i.e. in the
+    # configured output root). For default runs this is results/runs/latest; runs with
+    # a custom output_dir (e.g. tests using tmp_path) never touch the repo.
+    latest = out.parent / "latest"
+    latest.write_text(str(out.resolve()), encoding="utf-8")
 
     return meta
