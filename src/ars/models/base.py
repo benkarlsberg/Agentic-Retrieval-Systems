@@ -25,6 +25,9 @@ class GenerationResponse(BaseModel):
     latency_ms: float = 0.0
     raw: dict[str, Any] = Field(default_factory=dict)
     finish_reason: str = "stop"
+    # Model identifier reported by the provider in its response (e.g. a dated
+    # snapshot behind an alias). None for offline models.
+    response_model: str | None = None
 
 
 class ModelClient(ABC):

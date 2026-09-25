@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from ars.models.base import ModelClient
+from ars.models.base import GenerationResponse, ModelClient
 from ars.schema import AgentRole
 from ars.tracing.tracer import Tracer
 
@@ -21,3 +21,8 @@ class BaseAgent:
     def __init__(self, model: ModelClient, tracer: Tracer | None = None) -> None:
         self.model = model
         self.tracer = tracer
+
+    @staticmethod
+    def _response_meta(resp: GenerationResponse) -> dict[str, Any]:
+        """Trace fields describing the served model (empty for offline models)."""
+        return {"response_model": resp.response_model} if resp.response_model else {}

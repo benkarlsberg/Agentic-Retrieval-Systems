@@ -82,17 +82,21 @@ retrieval with reasoning \citep{trivedi2023ircot,jiang2023flare,yao2023react},
 reflect on evidence quality \citep{asai2023selfrag}, and route queries by
 complexity \citep{jeong2024adaptiverag}.
 In parallel, multi-agent designs split planning, retrieval, critique, and
-synthesis across specialized roles.
+synthesis across specialized roles
+\citep{nguyen2025marag,singh2025agenticrag}.
 These designs are motivated by multi-hop and multi-passage questions, where a
 single retrieval round may miss part of the required evidence, but they add
 model calls, retrieval calls, tokens, and latency.
 
 Comparing such architectures fairly is difficult.
-Published systems rarely share corpora, budget caps, logging schemas, and
-metric definitions, so an observed quality gap may reflect implementation
-choices rather than architecture.
-A useful comparison therefore needs a harness that holds these factors fixed
-and reports process cost alongside answer quality.
+Systems are usually introduced and evaluated separately, each with its own
+corpus, budget caps, logging, and metric definitions, so an observed quality
+gap may reflect implementation choices rather than architecture.
+Unified toolkits and recent comparative studies address parts of this
+problem (Section~\ref{sec:related}).
+A useful comparison of control architectures still needs a harness that
+holds the corpus, model, and budgets fixed and reports process cost
+alongside answer quality.
 
 \paragraph{Research questions.}
 The framework is organized around four questions:
@@ -126,7 +130,7 @@ This paper reports evidence on RQ1 and RQ2, preliminary evidence on RQ3
     multi-agent pipeline improves lenient exact match by about 11 points over
     RAG, mainly on bridge and comparison questions, at roughly eight times the
     token cost, while the single-agent loop gives no measurable gain over RAG
-    at 2.6--2.7$\times$ its token cost.
+    at 2.5--2.7$\times$ its token cost.
   \item An open-source release of the code, run configurations, and the
     analysis script that regenerates every table and figure in this paper
     from the run artifacts.
@@ -169,11 +173,45 @@ Its numbers are not comparable to the official HotpotQA leaderboard, which
 uses the full development and test sets and a different answer-scoring
 protocol.
 
+\paragraph{Agentic RAG comparisons, budgets, and harnesses.}
+A recent survey organizes agentic RAG systems by agent cardinality, control
+structure, and autonomy, and lists evaluation and efficiency among the open
+challenges \citep{singh2025agenticrag}.
+Role-separated multi-agent pipelines such as MA-RAG, which assigns planning,
+step definition, evidence extraction, and answering to separate agents,
+report gains on multi-hop QA benchmarks including HotpotQA
+\citep{nguyen2025marag}.
+Closest to our study, \citet{ferrazzi2026agenticrag} compare ``Enhanced''
+RAG pipelines (routing, query rewriting, re-ranking) with a single-tool
+agentic RAG system on four datasets; neither is universally better, and the
+agentic system uses on average about 3.3$\times$ more input tokens and
+1.5$\times$ more time.
+\citet{mccleary2026bcas} measure how search depth, retrieval strategy, and
+completion budget affect the accuracy and cost of an agentic search system
+under explicit tool-call and token budgets, across six LLMs and three QA
+benchmarks.
+On the tooling side, FlashRAG reimplements 16 RAG methods and collects 38
+benchmark datasets in one modular toolkit \citep{jin2025flashrag}, and RAG
+Playground compares naive vector, re-ranked, and hybrid retrieval combined
+with ReAct agents under different prompting strategies
+\citep{papadimitriou2024ragplayground}.
+ARS is complementary to these works.
+It holds the corpus, retriever, model, and budget controller fixed across
+three control architectures (retrieve-once, bounded single-agent, and
+role-separated multi-agent); logs tokens and latency for every model call
+and an estimated cost per question; adds an equal-retrieval budget mode;
+reports paired bootstrap confidence intervals over the same questions; and
+releases the per-question traces.
+
 \paragraph{Evaluation methodology.}
-Surveys of RAG emphasize the need for systematic metrics spanning answer
-quality, retrieval, faithfulness, and cost \citep{gao2023ragsurvey}.
+Surveys of RAG describe evaluation in terms of retrieval and generation
+quality, with context relevance, answer faithfulness, and answer relevance
+as the main quality scores \citep{gao2023ragsurvey}.
+Recent comparative studies of agentic RAG also report token usage and
+latency \citep{ferrazzi2026agenticrag,mccleary2026bcas}.
 ARS provides typed schemas, per-question traces, and bootstrap confidence
-intervals \citep{efron1993bootstrap} for these measurements.
+intervals \citep{efron1993bootstrap} for quality and process-cost
+measurements.
 
 \section{Framework Design}
 \label{sec:design}
@@ -292,6 +330,11 @@ sentences of its supporting paragraphs.
 \subsection{Model and budgets}
 All model calls use \texttt{gpt-4o-mini} through the OpenAI API with
 temperature 0 and at most 512 output tokens per call.
+The runs requested the \texttt{gpt-4o-mini} API alias between 04:24 and
+10:31 UTC on 2026-09-15. The model identifier returned in the API
+responses, which would name the dated snapshot behind the alias, was not
+recorded, so the exact snapshot cannot be recovered from the run artifacts;
+the harness now logs this identifier for future runs.
 In the \texttt{unconstrained} mode the budget is 8 steps, 12 model calls,
 5 retrieval calls, 20 documents, and 8{,}000 tokens per question.
 In the \texttt{equal\_retrieval} mode the single-agent and multi-agent

@@ -28,7 +28,11 @@ class SynthesizerAgent(BaseAgent):
         if self.tracer:
             self.tracer.emit(
                 TraceEventType.ANSWER,
-                payload={"answer": answer, "citations": [c.model_dump() for c in citations]},
+                payload={
+                    "answer": answer,
+                    "citations": [c.model_dump() for c in citations],
+                    **self._response_meta(resp),
+                },
                 agent_role=self.role.value,
                 prompt=prompt,
                 tokens_in=resp.prompt_tokens,

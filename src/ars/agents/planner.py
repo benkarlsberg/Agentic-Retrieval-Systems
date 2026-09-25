@@ -24,7 +24,7 @@ class PlannerAgent(BaseAgent):
         if self.tracer:
             self.tracer.emit(
                 TraceEventType.AGENT_MESSAGE,
-                payload={"content": resp.text},
+                payload={"content": resp.text, **self._response_meta(resp)},
                 agent_role=self.role.value,
                 prompt=prompt,
                 tokens_in=resp.prompt_tokens,

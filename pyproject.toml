@@ -9,7 +9,7 @@ description = "Research framework comparing conventional RAG, bounded single-age
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "ARS Research" }]
+authors = [{ name = "Ben Karlsberg", email = "bkarlsberg3@gatech.edu" }]
 keywords = ["rag", "retrieval", "agents", "multi-agent", "evaluation"]
 dependencies = [
   "pydantic>=2.5",

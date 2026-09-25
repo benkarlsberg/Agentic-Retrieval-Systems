@@ -15,9 +15,9 @@ Source: `results/runs/offline_fixture_compare_20260915_024627`
 
 | Architecture | EM | F1 | Abstention | Model calls | Retrieval calls | Tokens |
 |--------------|----|----|------------|-------------|-----------------|--------|
-| rag | 0.846 | 0.810 | 1.000 | 1.00 | 1.00 | ~295 |
+| rag | 0.846 | 0.810 | 1.000 | 1.00 | 1.00 | ~294 |
 | single_agent | 0.846 | 0.810 | 1.000 | 3.00 | 1.00 | ~654 |
-| multi_agent | 0.846 | 0.810 | 1.000 | 4.31 | 2.31 | ~1626 |
+| multi_agent | 0.846 | 0.810 | 1.000 | 4.31 | 2.31 | ~1625 |
 
 Interpretation: fixture run shows **matched heuristic quality** with
 **clearly increasing coordination/token cost** RAG → single-agent → multi-agent.

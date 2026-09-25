@@ -24,6 +24,8 @@ class OpenAICompatClient(ModelClient):
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.base_url = base_url or os.environ.get("OPENAI_BASE_URL")
         self.max_retries = max_retries
+        # Distinct model identifiers returned by the API (e.g. dated snapshots).
+        self.response_models: set[str] = set()
         if not self.api_key:
             raise RuntimeError(
                 "OPENAI_API_KEY not set. Use DeterministicModel for offline runs."
@@ -58,6 +60,9 @@ class OpenAICompatClient(ModelClient):
                 latency = (time.perf_counter() - t0) * 1000
                 choice = resp.choices[0]
                 usage = getattr(resp, "usage", None)
+                served_model = getattr(resp, "model", None) or None
+                if served_model:
+                    self.response_models.add(served_model)
                 return GenerationResponse(
                     text=choice.message.content or "",
                     model_name=self.model_name,
@@ -66,6 +71,7 @@ class OpenAICompatClient(ModelClient):
                     latency_ms=latency,
                     finish_reason=choice.finish_reason or "stop",
                     raw={"id": getattr(resp, "id", None), "attempts": attempt + 1},
+                    response_model=served_model,
                 )
             except RateLimitError as e:
                 last_err = e

@@ -31,7 +31,11 @@ class SingleAgentController(BaseAgent):
         if self.tracer:
             self.tracer.emit(
                 TraceEventType.ROUTING,
-                payload={"raw": resp.text, "action": action.model_dump()},
+                payload={
+                    "raw": resp.text,
+                    "action": action.model_dump(),
+                    **self._response_meta(resp),
+                },
                 agent_role=self.role.value,
                 prompt=prompt,
                 tokens_in=resp.prompt_tokens,

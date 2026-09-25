@@ -179,6 +179,10 @@ def run_from_config(config_path: Path, output_dir: Path | None = None) -> dict[s
             else f"Live run with {model_settings.provider}/{model_settings.model_name} on fixture corpus/dataset."
         ),
     }
+    served_models = getattr(model, "response_models", None)
+    if served_models is not None:
+        # Model identifiers reported by the provider (e.g. dated snapshot behind an alias)
+        meta["response_models"] = sorted(served_models)
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     # latest symlink-like pointer
