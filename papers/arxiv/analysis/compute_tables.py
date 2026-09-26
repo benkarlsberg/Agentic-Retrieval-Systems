@@ -2,8 +2,10 @@
 """Recompute the paper's result tables and figures from the ARS run artifacts.
 
 Inputs (read-only): per-example results_<arch>.json files and JSONL traces of the
-two live gpt-4o-mini HotpotQA-slice runs, plus the slice dataset (for categories).
-Outputs: analysis/results.json and figures/live_*.png.
+two live gpt-4o-mini HotpotQA-slice runs, the slice dataset (for categories), the cached
+LLM-judge verdicts judge_<arch>.json written by scripts/judge_answers.py, and the manual
+audit judge_audit.csv (unconstrained run). No API calls are made here.
+Outputs: analysis/results.json, analysis/tables.tex and figures/live_*.png.
 
 Usage:
   python analysis/compute_tables.py [--ars-root ../..]  # repository root
@@ -12,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from collections import Counter
 from pathlib import Path
@@ -33,6 +36,8 @@ FIELDS = [
 ]
 N_BOOT = 10_000
 SEED = 42
+PAIRS = [("multi_agent", "rag"), ("single_agent", "rag"), ("multi_agent", "single_agent")]
+AUDIT_FILE = "judge_audit.csv"
 PAPER_DIR = Path(__file__).resolve().parents[1]
 
 
@@ -58,11 +63,24 @@ def trace_retrieved_ids(trace: Path) -> list[str]:
     return list(dict.fromkeys(ids))
 
 
+def load_judge(run_dir: Path, arch: str, ids: list[str]) -> dict[str, float]:
+    """Cached LLM-judge verdicts (1.0 correct / 0.0 incorrect); every item must be judged."""
+    items = json.loads((run_dir / f"judge_{arch}.json").read_text(encoding="utf-8"))["items"]
+    out = {}
+    for eid in ids:
+        v = items[eid]["verdict"]
+        if v not in ("correct", "incorrect"):
+            raise SystemExit(f"{run_dir.name}/judge_{arch}.json: no verdict for {eid}")
+        out[eid] = float(v == "correct")
+    return out
+
+
 def load_run(root: Path, run_rel: str, examples: dict[str, dict]) -> dict[str, list[dict]]:
     run_dir = root / run_rel
     out: dict[str, list[dict]] = {}
     for arch in ARCHS:
         rows = json.loads((run_dir / f"results_{arch}.json").read_text(encoding="utf-8"))
+        judge = load_judge(run_dir, arch, [r["example_id"] for r in rows])
         recs = []
         for r in rows:
             ex = examples[r["example_id"]]
@@ -84,6 +102,7 @@ def load_run(root: Path, run_rel: str, examples: dict[str, dict]) -> dict[str, l
                 "error": r["error"],
                 "stop_reason": r["stop_reason"],
                 "answer_words": len((r["answer"] or "").split()),
+                "judge": judge[r["example_id"]],
                 "m": m,
             })
         recs.sort(key=lambda z: z["example_id"])
@@ -188,11 +207,153 @@ def main() -> None:
         res["cross_mode_agreement_em"][a] = float(np.mean(
             [ru["m"]["em"] == re_["m"]["em"] for ru, re_ in zip(u, e)]))
 
+    res["judge"] = judge_analysis(root, runs)
+
     out = PAPER_DIR / "analysis" / "results.json"
     out.write_text(json.dumps(res, indent=2), encoding="utf-8")
     print(f"wrote {out}")
     make_figures(res)
     write_latex_tables(res)
+
+
+# ------------------------------------------------------------------ LLM judge
+
+def cohen_kappa(a: list[int], b: list[int]) -> float:
+    a_, b_ = np.array(a), np.array(b)
+    po = float((a_ == b_).mean())
+    pa, pb = a_.mean(), b_.mean()
+    pe = float(pa * pb + (1 - pa) * (1 - pb))
+    return (po - pe) / (1 - pe) if pe < 1 else 1.0
+
+
+def judge_paired(a: list[dict], b: list[dict], rng: np.random.Generator) -> dict:
+    assert [r["example_id"] for r in a] == [r["example_id"] for r in b]
+    xa = np.array([r["judge"] for r in a])
+    xb = np.array([r["judge"] for r in b])
+    lo, hi = boot_ci(xa - xb, rng)
+    return {"mean_diff": float((xa - xb).mean()), "ci95": (lo, hi), "n": len(xa),
+            "a_only_correct": int(((xa == 1) & (xb == 0)).sum()),
+            "b_only_correct": int(((xa == 0) & (xb == 1)).sum())}
+
+
+def judge_summary(recs: list[dict], rng: np.random.Generator) -> dict:
+    x = np.array([r["judge"] for r in recs])
+    ans = [r for r in recs if r["answerable"]]
+    s = {"n": len(recs), "acc": float(x.mean()), "acc_ci95": boot_ci(x, rng),
+         "n_correct": int(x.sum()),
+         "n_correct_answerable": int(sum(r["judge"] for r in ans)),
+         "n_correct_unanswerable": int(sum(r["judge"] for r in recs if not r["answerable"]))}
+    s["acc_answerable_only"] = s["n_correct_answerable"] / len(ans) if ans else None
+    return s
+
+
+def judge_analysis(root: Path, runs: dict[str, dict[str, list[dict]]]) -> dict:
+    """LLM-judge accuracy, paired differences, agreement with lenient EM and the audit."""
+    rng = np.random.default_rng(SEED)
+    out: dict = {"overall": {}, "paired": {}, "by_category": {}, "paired_by_category": {},
+                 "confusion_vs_lenient": {}, "cross_mode_agreement": {},
+                 "answerable_abstentions_judged_correct": {}, "meta": {}}
+    tok_in = tok_out = 0
+    cost = 0.0
+    models: set[str] = set()
+    n_items = n_failed = 0
+    prompt_versions: set[str] = set()
+    for mode, rel in RUNS.items():
+        out["meta"][mode] = {}
+        for a in ARCHS:
+            meta = json.loads((root / rel / f"judge_{a}.json").read_text(encoding="utf-8"))["meta"]
+            out["meta"][mode][a] = meta
+            tok_in += meta["prompt_tokens"]
+            tok_out += meta["completion_tokens"]
+            cost += meta["cost_usd_estimate"]
+            models |= set(meta["response_models"])
+            n_items += meta["n_items"]
+            n_failed += meta["n_failed"]
+            prompt_versions.add(meta["prompt_version"])
+    out["totals"] = {"n_judgments": n_items, "n_failed": n_failed, "prompt_tokens": tok_in,
+                     "completion_tokens": tok_out, "cost_usd_estimate": round(cost, 4),
+                     "response_models": sorted(models), "prompt_versions": sorted(prompt_versions)}
+    for mode, per_arch in runs.items():
+        out["overall"][mode] = {a: judge_summary(per_arch[a], rng) for a in ARCHS}
+        out["paired"][mode] = {f"{x}-{y}": judge_paired(per_arch[x], per_arch[y], rng)
+                               for x, y in PAIRS}
+        out["by_category"][mode] = {
+            a: {c: judge_summary([r for r in per_arch[a] if r["category"] == c], rng)
+                for c in CATEGORIES} for a in ARCHS}
+        out["paired_by_category"][mode] = {}
+        for c in CATEGORIES:
+            sel = lambda rs: [r for r in rs if r["category"] == c]  # noqa: E731
+            out["paired_by_category"][mode][c] = {
+                f"{x}-{y}": judge_paired(sel(per_arch[x]), sel(per_arch[y]), rng)
+                for x, y in PAIRS[:2]}
+        out["confusion_vs_lenient"][mode] = {}
+        out["answerable_abstentions_judged_correct"][mode] = {}
+        for a in ARCHS:
+            cm = Counter((int(r["m"]["em"]), int(r["judge"]), r["answerable"])
+                         for r in per_arch[a])
+            out["confusion_vs_lenient"][mode][a] = {
+                "lenient1_judge1": cm[(1, 1, True)] + cm[(1, 1, False)],
+                "lenient1_judge0": cm[(1, 0, True)] + cm[(1, 0, False)],
+                "lenient0_judge1": cm[(0, 1, True)] + cm[(0, 1, False)],
+                "lenient0_judge0": cm[(0, 0, True)] + cm[(0, 0, False)],
+                "lenient0_judge1_unanswerable": cm[(0, 1, False)],
+                "lenient0_judge1_answerable": cm[(0, 1, True)],
+            }
+            out["answerable_abstentions_judged_correct"][mode][a] = int(sum(
+                r["abstained"] and r["answerable"] and r["judge"] == 1 for r in per_arch[a]))
+    for a in ARCHS:
+        u, e = runs["unconstrained"][a], runs["equal_retrieval"][a]
+        out["cross_mode_agreement"][a] = float(np.mean(
+            [ru["judge"] == re_["judge"] for ru, re_ in zip(u, e)]))
+    out["audit"] = audit_analysis(root / RUNS["unconstrained"] / AUDIT_FILE,
+                                  runs["unconstrained"])
+    return out
+
+
+def audit_analysis(path: Path, per_arch: dict[str, list[dict]]) -> dict:
+    """Agreement of judge and lenient EM with the manual audit labels."""
+    with path.open(encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    judge_by = {(a, r["example_id"]): r["judge"] for a in ARCHS for r in per_arch[a]}
+    for r in rows:
+        if r["audit_verdict"] not in ("correct", "incorrect"):
+            raise SystemExit(f"{path}: missing audit verdict for {r['example_id']}")
+        if float(r["judge_verdict"] == "correct") != judge_by[(r["architecture"], r["example_id"])]:
+            raise SystemExit(f"{path}: judge verdict out of date for {r['example_id']}")
+    aud = [int(r["audit_verdict"] == "correct") for r in rows]
+    jud = [int(r["judge_verdict"] == "correct") for r in rows]
+    len_ = [int(r["lenient_em"]) for r in rows]
+    res = {"n": len(rows),
+           "judge_agree": int(sum(x == y for x, y in zip(jud, aud))),
+           "lenient_agree": int(sum(x == y for x, y in zip(len_, aud))),
+           "judge_kappa": cohen_kappa(jud, aud), "lenient_kappa": cohen_kappa(len_, aud),
+           "by_stratum": {}}
+    res["judge_agreement"] = res["judge_agree"] / res["n"]
+    res["lenient_agreement"] = res["lenient_agree"] / res["n"]
+    # Population sizes of each (stratum, architecture) cell among answerable questions,
+    # used to reweight the stratified sample to the full unconstrained run.
+    pop = Counter()
+    for a in ARCHS:
+        for r in per_arch[a]:
+            if r["answerable"]:
+                pop[("agree" if int(r["m"]["em"]) == int(r["judge"]) else "disagree", a)] += 1
+    wsum = wtot = 0.0
+    for st in ("disagree", "agree"):
+        sel = [(j, y) for r, j, y in zip(rows, jud, aud) if r["stratum"] == st]
+        res["by_stratum"][st] = {"n": len(sel), "judge_agree": int(sum(j == y for j, y in sel))}
+        for a in ARCHS:
+            cell = [(j, y) for r, j, y in zip(rows, jud, aud)
+                    if r["stratum"] == st and r["architecture"] == a]
+            if cell:
+                wsum += pop[(st, a)] * np.mean([j == y for j, y in cell])
+                wtot += pop[(st, a)]
+    res["judge_agreement_reweighted_answerable"] = float(wsum / wtot)
+    res["population_answerable"] = {f"{st}/{a}": n for (st, a), n in sorted(pop.items())}
+    res["judge_audit_disagreements"] = [
+        {"example_id": r["example_id"], "architecture": r["architecture"],
+         "judge": r["judge_verdict"], "audit": r["audit_verdict"], "note": r["audit_note"]}
+        for r, j, y in zip(rows, jud, aud) if j != y]
+    return res
 
 
 def f3(x: float) -> str:
@@ -253,6 +414,40 @@ def write_latex_tables(res: dict) -> None:
             f"{s['n_abstain_answerable']}/{s['n_answerable']} & "
             f"{s['n_abstain_unanswerable']}/{s['n_unanswerable']} & "
             f"{s['mean_answer_words_non_abstained']:.1f} \\\\")
+    out.append("% ---- LLM judge (both modes) ----")
+    J = res["judge"]
+    for mode in ("unconstrained", "equal_retrieval"):
+        out.append(f"\\multicolumn{{5}}{{l}}{{\\emph{{{mode_name[mode]}}}}} \\\\")
+        for a in ARCHS:
+            s = J["overall"][mode][a]
+            lo, hi = s["acc_ci95"]
+            cm = J["confusion_vs_lenient"][mode][a]
+            if a == "rag":
+                delta = "---"
+            else:
+                d = J["paired"][mode][f"{a}-rag"]
+                dlo, dhi = d["ci95"]
+                delta = (f"{signed(d['mean_diff'])} {{\\scriptsize[{signed(dlo)}, {signed(dhi)}]}} "
+                         f"({d['a_only_correct']}/{d['b_only_correct']})")
+            out.append(
+                f"\\quad {ARCH_LABEL[a]} & {f3(res['overall'][mode][a]['em'])} & "
+                f"{s['acc']:.3f} {{\\scriptsize[{lo:.3f}, {hi:.3f}]}} & {delta} & "
+                f"{cm['lenient1_judge0']} / {cm['lenient0_judge1_answerable']} + "
+                f"{cm['lenient0_judge1_unanswerable']} \\\\")
+        if mode == "unconstrained":
+            out.append("\\midrule")
+    out.append("% ---- LLM judge by category (unconstrained) ----")
+    cat_label_j = dict(cat_label, unanswerable="Unanswerable")
+    for c in CATEGORIES:
+        row = [f"{cat_label_j[c]} ({J['by_category']['unconstrained']['rag'][c]['n']})"]
+        for a in ARCHS:
+            row.append(f3(J["by_category"]["unconstrained"][a][c]["acc"]))
+        for pair in ("multi_agent-rag", "single_agent-rag"):
+            d = J["paired_by_category"]["unconstrained"][c][pair]
+            lo, hi = d["ci95"]
+            row.append(f"{signed(d['mean_diff'])} {{\\scriptsize[{signed(lo)}, {signed(hi)}]}} "
+                       f"({d['a_only_correct']}/{d['b_only_correct']})")
+        out.append(" & ".join(row) + " \\\\")
     (PAPER_DIR / "analysis" / "tables.tex").write_text("\n".join(out) + "\n", encoding="utf-8")
     print("wrote analysis/tables.tex")
 

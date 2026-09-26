@@ -128,9 +128,10 @@ This paper reports evidence on RQ1 and RQ2, preliminary evidence on RQ3
     cost (tokens, model and retrieval calls, latency, estimated USD).
   \item A quality--cost analysis showing that, in this setting, the
     multi-agent pipeline improves lenient exact match by about 11 points over
-    RAG, mainly on bridge and comparison questions, at roughly eight times the
-    token cost, while the single-agent loop gives no measurable gain over RAG
-    at 2.5--2.7$\times$ its token cost.
+    RAG (16 points under an LLM judge checked against a manual audit), mainly
+    on bridge and comparison questions, at roughly eight times the token cost,
+    while the single-agent loop gives no measurable gain over RAG at
+    2.5--2.7$\times$ its token cost.
   \item An open-source release of the code, run configurations, and the
     analysis script that regenerates every table and figure in this paper
     from the run artifacts.
@@ -389,7 +390,8 @@ punctuation, articles, and extra whitespace).
 \end{itemize}
 Answer metrics are 0 on the 8 unanswerable questions, and all means are over
 the full 153 questions, so the maximum attainable \lem{} is
-$145/153 = 0.948$.
+$145/153 = 0.948$ (the LLM judge described below instead credits a correct
+abstention on these questions).
 Because \texttt{gpt-4o-mini} answers in full sentences (30--34 words on
 average for non-abstained answers, against 2.5-word gold answers), strict EM
 is 0.000 for every architecture in both runs and token F1 is heavily
@@ -404,6 +406,44 @@ The estimated cost uses list prices of USD 0.15 (input) and USD 0.60 (output)
 per million tokens, and the harness splits each question's total tokens
 equally between input and output; it is a rough estimate, not billing data.
 Latency is end-to-end wall-clock time including API round trips.
+
+\paragraph{LLM-judge correctness.}
+Because containment can credit an answer that mentions the gold string
+without committing to it, we also grade every saved answer with an LLM
+judge; no system was re-run.
+The judge is \texttt{gpt-4o-mini} at temperature 0 with JSON output (the
+API returned \texttt{gpt-4o-mini-2024-07-18} for every call).
+It sees only the question, the gold answer, and the system answer, not the
+architecture, and the requests for both runs and all three architectures
+are issued in one shuffled order.
+For answerable questions the rubric marks an answer correct only if it
+commits to the gold entity or value (aliases, formatting differences, and
+reasonable paraphrases are accepted), and incorrect if it hedges between
+candidates, names a different entity, mentions the gold string only
+incidentally while asserting something else, or abstains.
+For the 8 unanswerable questions the judge receives a separate rubric under
+which an answer is correct if and only if it abstains or says that the
+information is not available.
+An earlier prompt that stated both rubrics together credited abstentions on
+answerable questions; it was replaced before the audit, and only verdicts
+from the final prompt are reported.
+All 918 judgments (459 per run) returned a valid verdict, using 313{,}858
+prompt and 17{,}181 completion tokens (about USD 0.06 at list prices).
+To check the judge, we manually audited 60 judgments from the unconstrained
+run, drawn with a fixed seed from answerable questions and spread evenly
+over the architectures: 30 on which the judge and \lem{} disagree and 30 on
+which they agree.
+The judge agreed with the audit on 54 of the 60 (Cohen's $\kappa = 0.78$),
+against 36 of 60 for \lem{} ($\kappa = 0.23$); reweighting the two strata to
+their frequency in the run gives an estimated judge--audit agreement of
+96.8\% on answerable questions.
+In four of the six disagreements the judge accepted an answer that does not
+match the gold, twice by overruling an apparently wrong gold label with
+outside knowledge and twice by accepting a loosely related answer to a gold
+string that is a sentence fragment; in the other two it rejected
+``over 300{,}000'' for the gold ``300{,}000''.
+The judge script and prompts, the cached verdicts, and the audit file are
+included in the repository.
 
 \paragraph{Statistics.}
 We report percentile bootstrap 95\% confidence intervals
@@ -425,10 +465,12 @@ and SHA-256 of the source file) is recorded in
 pip install -e ".[dev,openai]"
 python scripts/run_experiment.py \
   --config configs/experiments/live_hotpot150_unconstrained.yaml
+python scripts/judge_answers.py   # LLM judge; verdicts are cached
 python analysis/compute_tables.py --ars-root <path-to-ARS>
 \end{verbatim}
 The last script recomputes every number, table, and figure in
-Section~\ref{sec:results} from the per-question results and traces.
+Section~\ref{sec:results} from the per-question results, traces, cached
+judge verdicts, and audit file, without API calls.
 
 \section{Results}
 \label{sec:results}
@@ -591,6 +633,90 @@ because answer metrics are 0 there by definition.}
 \label{fig:category}
 \end{figure}
 
+\subsection{LLM-judge correctness}
+\label{sec:judge}
+
+Table~\ref{tab:judge} compares \lem{} with judge accuracy.
+The judge scores all three architectures higher than \lem{} (unconstrained:
+0.601 for RAG, 0.575 for the single-agent loop, and 0.765 for the
+multi-agent pipeline).
+The flip counts show why.
+The judge withdraws credit that \lem{} gave to answers that hedge, name the
+gold and then abstain, or mention the gold only in passing (8, 12, and 4
+questions for RAG, the single-agent loop, and the multi-agent pipeline).
+It adds credit for name variants and paraphrases that containment misses
+(e.g., ``Stephen Ireland'' for the gold ``Stephen James Ireland'', or gold
+strings that are sentence fragments; 14, 16, and 18 answerable questions),
+and for abstention on the 8 unanswerable questions.
+Restricted to the 145 answerable questions, judge accuracy is 0.579 (RAG),
+0.552 (single-agent), and 0.752 (multi-agent).
+
+The architecture comparison holds, and the multi-agent gain is larger under
+the judge: the paired multi-agent minus RAG difference is $+0.163$ (95\% CI
+$+0.098$ to $+0.235$; 28 vs.\ 3 discordant questions), compared with
+$+0.111$ for \lem{}.
+The single-agent minus RAG difference is $-0.026$ ($-0.092$ to $+0.039$;
+11 vs.\ 15), again no detectable difference.
+The equal-retrieval run replicates this (multi-agent minus RAG $+0.163$,
+$+0.105$ to $+0.229$, 27 vs.\ 2; single-agent minus RAG $-0.020$, $-0.085$
+to $+0.046$, 11 vs.\ 14), and per-question judge verdicts agree between the
+two runs on 98.7\% (RAG), 95.4\% (single-agent), and 97.4\% (multi-agent)
+of questions.
+By stratum (Table~\ref{tab:judgecat}), the multi-agent gain over RAG is
+$+0.170$ on multi-hop and $+0.233$ on multi-passage questions, with both
+intervals excluding zero.
+The single-agent loop scores below RAG on multi-passage ($-0.167$) and
+short-context ($-0.200$) questions, but neither interval excludes zero.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{LLM-judge accuracy next to \lem{} (153 questions; the judge counts
+an abstention on an unanswerable question as correct). Judge: mean with
+bootstrap 95\% CI. $\Delta$ vs.\ RAG: paired difference in judge accuracy
+with bootstrap 95\% CI; the parenthesized pair counts questions judged
+correct only for that architecture / only for RAG. Flips: questions with
+\lem{}$\,=1$ judged incorrect / questions with \lem{}$\,=0$ judged correct
+(answerable + unanswerable).}
+\label{tab:judge}
+\begin{tabular}{lcccc}
+\toprule
+Architecture & \lem{} & Judge & $\Delta$ Judge vs.\ RAG & Flips \\
+\midrule
+\multicolumn{5}{l}{\emph{Unconstrained}} \\
+\quad RAG & 0.510 & 0.601 {\scriptsize[0.523, 0.680]} & --- & 8 / 14 + 8 \\
+\quad Single-agent & 0.497 & 0.575 {\scriptsize[0.497, 0.654]} & $-$0.026 {\scriptsize[$-$0.092, $+$0.039]} (11/15) & 12 / 16 + 8 \\
+\quad Multi-agent & 0.621 & 0.765 {\scriptsize[0.693, 0.830]} & $+$0.163 {\scriptsize[$+$0.098, $+$0.235]} (28/3) & 4 / 18 + 8 \\
+\midrule
+\multicolumn{5}{l}{\emph{Equal-retrieval}} \\
+\quad RAG & 0.503 & 0.601 {\scriptsize[0.523, 0.673]} & --- & 8 / 15 + 8 \\
+\quad Single-agent & 0.516 & 0.582 {\scriptsize[0.503, 0.660]} & $-$0.020 {\scriptsize[$-$0.085, $+$0.046]} (11/14) & 12 / 14 + 8 \\
+\quad Multi-agent & 0.621 & 0.765 {\scriptsize[0.699, 0.830]} & $+$0.163 {\scriptsize[$+$0.105, $+$0.229]} (27/2) & 3 / 17 + 8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\caption{LLM-judge accuracy by stratum, unconstrained mode. $\Delta$
+columns as in Table~\ref{tab:category}, computed on judge verdicts.}
+\label{tab:judgecat}
+\begin{tabular}{lccccc}
+\toprule
+Stratum ($n$) & RAG & Single & Multi &
+  $\Delta$ Multi $-$ RAG & $\Delta$ Single $-$ RAG \\
+\midrule
+Multi-hop (100) & 0.510 & 0.550 & 0.680 & $+$0.170 {\scriptsize[$+$0.090, $+$0.250]} (18/1) & $+$0.040 {\scriptsize[$-$0.030, $+$0.110]} (9/5) \\
+Multi-passage (30) & 0.700 & 0.533 & 0.933 & $+$0.233 {\scriptsize[$+$0.033, $+$0.433]} (9/2) & $-$0.167 {\scriptsize[$-$0.367, $+$0.000]} (2/7) \\
+Single-hop (15) & 0.800 & 0.600 & 0.867 & $+$0.067 {\scriptsize[$+$0.000, $+$0.200]} (1/0) & $-$0.200 {\scriptsize[$-$0.400, $+$0.000]} (0/3) \\
+Unanswerable (8) & 1.000 & 1.000 & 1.000 & $+$0.000 {\scriptsize[$+$0.000, $+$0.000]} (0/0) & $+$0.000 {\scriptsize[$+$0.000, $+$0.000]} (0/0) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Evidence coverage and abstention}
 
 Table~\ref{tab:diag} reports retrieval and abstention diagnostics for the
@@ -604,8 +730,11 @@ On 16 answerable questions the single-agent controller abstained without
 retrieving anything.
 It abstains on 31 of 145 answerable questions, RAG on 24, and the
 multi-agent pipeline on 8.
-On the unanswerable items, RAG and the single-agent loop abstain on all 8
-and the multi-agent pipeline on 6.
+On the unanswerable items, the harness flags abstentions on all 8 for RAG
+and the single-agent loop and on 6 for the multi-agent pipeline; the other
+two multi-agent answers also decline (``the context provided does not
+mention \ldots''), but without the \texttt{ABSTAIN} token the harness looks
+for, and the judge counts all 8 as correct abstentions.
 
 \begin{table}[!ht]
 \centering
@@ -613,7 +742,7 @@ and the multi-agent pipeline on 6.
 \caption{Diagnostics, unconstrained mode. Evidence recall: mean fraction of
 gold-evidence sentences retrieved (answerable questions). All support:
 fraction of answerable questions with at least one retrieved sentence from
-every supporting paragraph. Abstentions are counts. Answer length is the mean
+every supporting paragraph. Abstentions are counts flagged by the harness. Answer length is the mean
 number of words in non-abstained answers.}
 \label{tab:diag}
 \begin{tabular}{lccccc}
@@ -648,8 +777,9 @@ Because the critic never stopped early in these runs, the study cannot
 separate the contribution of planning and critique from that of a fixed
 three-round retrieval schedule; an ablation that gives RAG a comparable
 passage budget (e.g., \texttt{top\_k}\,$=$\,15) would be needed.
-The pipeline's lower abstention rate has a cost on unanswerable questions,
-where it answered 2 of 8 instead of abstaining.
+Its lower abstention rate did not cost it on the unanswerable questions:
+although the harness flag records only 6 of 8 abstentions, the two remaining
+answers also decline to answer.
 
 \paragraph{Why the single-agent loop does not help.}
 In this configuration the single-agent loop rarely iterates: 101 of 153
@@ -667,7 +797,8 @@ show that iterative retrieval is ineffective in general
 \paragraph{Quality--cost trade-off.}
 Viewed as a Pareto problem, RAG and the multi-agent pipeline are both
 efficient choices here, and which one to use depends on the value of about
-11 additional correct answers per 100 questions relative to roughly
+11 additional correct answers per 100 questions (16 under the LLM judge)
+relative to roughly
 8$\times$ the tokens, 5$\times$ the model calls, and tens of seconds of
 added latency per question.
 At the list prices used here the absolute cost difference is small
@@ -680,7 +811,10 @@ The gap between \lem{} ($\approx$0.5--0.6) and token F1 ($\approx$0.1) is
 caused by answer verbosity, not by retrieval: the model typically embeds the
 correct short answer in a full sentence.
 Containment-based metrics credit these answers, but they can also credit a
-long answer that mentions the gold string without committing to it.
+long answer that mentions the gold string without committing to it, and they
+miss correct answers phrased differently from the gold.
+The LLM judge (Section~\ref{sec:judge}) corrects most errors of both kinds
+in the audited sample and leaves the conclusions unchanged.
 Constraining the output format or extracting a short answer span would allow
 standard strict EM and token F1 to be used.
 
@@ -698,8 +832,15 @@ standard strict EM and token F1 to be used.
   \item \textbf{Primary metrics are lenient.} Raw token F1 is depressed by
     verbose answers, and strict EM is 0 for every architecture because
     normalized string equality almost never holds for sentence-length
-    answers. We therefore rely on \lem{} and \cg{}, which are containment
-    based and can over-credit long answers.
+    answers. \lem{} and \cg{} are containment based and can over-credit
+    long answers; we therefore also report LLM-judge accuracy.
+  \item \textbf{LLM judge.} The judge is the same model
+    (\texttt{gpt-4o-mini}) as the systems under test, so it may share their
+    biases or prefer their phrasing. It sometimes relies on outside
+    knowledge to overrule an apparently wrong gold label, and some HotpotQA
+    gold strings in the slice are sentence fragments, which makes any
+    reference-based grading noisy. The audit covers 60 stratified
+    judgments labelled by one annotator.
   \item \textbf{Small strata.} With 30, 15, and 8 questions in the smaller
     strata, confidence intervals are wide, and per-category conclusions
     beyond the multi-hop stratum are tentative.
@@ -729,7 +870,9 @@ a three-round multi-agent pipeline improved lenient exact match over RAG by
 about 11 points, mainly on bridge and comparison questions, at about eight
 times the token cost and a large latency increase, while the single-agent
 loop added cost without a quality gain.
-Both findings replicated under an equal-retrieval budget.
+Both findings replicated under an equal-retrieval budget, and both held when
+the saved answers were regraded by an LLM judge checked against a manual
+audit, which put the multi-agent gain at about 16 points.
 
 \paragraph{Future work.}
 (1)~Passage-budget-matched baselines (RAG with larger \texttt{top\_k}) and
