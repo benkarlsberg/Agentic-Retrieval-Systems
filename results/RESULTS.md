@@ -73,7 +73,7 @@ run directory: 918 judgments, 0 failures, 313,858 prompt + 17,181 completion tok
 (Flip counts are for the unconstrained run.) Paired differences in judge accuracy (unconstrained): multi-agent − RAG
 +0.163 [+0.098, +0.235] (28 vs. 3 discordant); single-agent − RAG −0.026 [−0.092, +0.039] (11 vs. 15).
 Equal retrieval: +0.163 [+0.105, +0.229] (27 vs. 2) and −0.020 [−0.085, +0.046] (11 vs. 14).
-Manual audit of 60 sampled unconstrained judgments (30 judge/lenient disagreements, 30 agreements;
+Audit of 60 sampled unconstrained judgments (30 judge/lenient disagreements, 30 agreements;
 `judge_audit.csv`): judge agrees on 54/60 (Cohen's kappa 0.78), lenient EM on 36/60 (kappa 0.23).
 
 A smaller live check on the 13-question fixture set is in

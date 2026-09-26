@@ -128,7 +128,7 @@ This paper reports evidence on RQ1 and RQ2, preliminary evidence on RQ3
     cost (tokens, model and retrieval calls, latency, estimated USD).
   \item A quality--cost analysis showing that, in this setting, the
     multi-agent pipeline improves lenient exact match by about 11 points over
-    RAG (16 points under an LLM judge checked against a manual audit), mainly
+    RAG (16 points under an LLM judge checked against an audit), mainly
     on bridge and comparison questions, at roughly eight times the token cost,
     while the single-agent loop gives no measurable gain over RAG at
     2.5--2.7$\times$ its token cost.
@@ -429,10 +429,12 @@ answerable questions; it was replaced before the audit, and only verdicts
 from the final prompt are reported.
 All 918 judgments (459 per run) returned a valid verdict, using 313{,}858
 prompt and 17{,}181 completion tokens (about USD 0.06 at list prices).
-To check the judge, we manually audited 60 judgments from the unconstrained
-run, drawn with a fixed seed from answerable questions and spread evenly
-over the architectures: 30 on which the judge and \lem{} disagree and 30 on
-which they agree.
+To check the judge, we audited 60 judgments.
+An AI assistant produced initial correctness labels, which the author then
+reviewed item by item against the gold answers and model outputs.
+The 60 were drawn with a fixed seed from answerable questions in the
+unconstrained run, spread evenly over the architectures: 30 on which the
+judge and \lem{} disagree and 30 on which they agree.
 The judge agreed with the audit on 54 of the 60 (Cohen's $\kappa = 0.78$),
 against 36 of 60 for \lem{} ($\kappa = 0.23$); reweighting the two strata to
 their frequency in the run gives an estimated judge--audit agreement of
@@ -840,7 +842,8 @@ standard strict EM and token F1 to be used.
     knowledge to overrule an apparently wrong gold label, and some HotpotQA
     gold strings in the slice are sentence fragments, which makes any
     reference-based grading noisy. The audit covers 60 stratified
-    judgments labelled by one annotator.
+    judgments; its labels were drafted by an AI assistant and reviewed by
+    a single author.
   \item \textbf{Small strata.} With 30, 15, and 8 questions in the smaller
     strata, confidence intervals are wide, and per-category conclusions
     beyond the multi-hop stratum are tentative.
@@ -871,7 +874,7 @@ about 11 points, mainly on bridge and comparison questions, at about eight
 times the token cost and a large latency increase, while the single-agent
 loop added cost without a quality gain.
 Both findings replicated under an equal-retrieval budget, and both held when
-the saved answers were regraded by an LLM judge checked against a manual
+the saved answers were regraded by an LLM judge checked against an
 audit, which put the multi-agent gain at about 16 points.
 
 \paragraph{Future work.}

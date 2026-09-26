@@ -105,7 +105,7 @@ The LLM-judge column regrades the saved answers with `gpt-4o-mini` (temperature 
 rubric that requires the answer to commit to the gold entity and credits abstention on the unanswerable
 questions (`scripts/judge_answers.py`; verdicts cached in each run directory as `judge_<arch>.json`). Under the
 judge, multi-agent minus RAG is +0.163 (95% CI +0.098 to +0.235; 28 vs. 3 discordant questions) and
-single-agent minus RAG is -0.026 (-0.092 to +0.039). The judge agreed with a manual audit of 60 sampled
+single-agent minus RAG is -0.026 (-0.092 to +0.039). The judge agreed with an audit of 60 sampled
 judgments on 54 (Cohen's kappa 0.78; lenient EM: 36 of 60, kappa 0.23); the audit is in
 `results/runs/live_hotpot150_unconstrained_20260915_042424/judge_audit.csv`.
 
