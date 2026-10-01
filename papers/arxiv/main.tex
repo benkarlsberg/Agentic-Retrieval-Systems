@@ -56,7 +56,7 @@ records per-question traces.
 The three architectures are compared with \texttt{gpt-4o-mini} on a
 153-question slice of the HotpotQA distractor development set, using BM25
 over 5{,}675 sentence-level passages, under unconstrained and
-equal-retrieval budgets, which give the same results.
+equal-retrieval budgets, which give the same conclusions.
 With the default five passages for RAG, the multi-agent pipeline is more
 accurate under an audited LLM judge (0.765 vs.\ 0.601; paired difference
 $+0.163$, 95\% CI $+0.098$ to $+0.235$) at 8.2$\times$ the tokens, while the
@@ -211,10 +211,10 @@ paragraphs.
 \paragraph{Model and budgets.}
 All calls use \texttt{gpt-4o-mini} at temperature 0 with at most 512 output
 tokens.
-The main runs requested the API alias between 04:24 and 10:31 UTC on
-2026-09-15 and did not record the returned model identifier, so their exact
-snapshot cannot be recovered; the control runs (23:15--23:21 UTC,
-2026-09-30) and all judge calls recorded \texttt{gpt-4o-mini-2024-07-18}.
+The main runs (2026-09-15) requested the API alias and did not record the
+returned model identifier, so their exact snapshot cannot be recovered; the
+control runs (2026-09-30) and all judge calls recorded
+\texttt{gpt-4o-mini-2024-07-18}.
 The \texttt{unconstrained} budget is 8 steps, 12 model calls, 5 retrieval
 calls, 20 documents, and 8{,}000 tokens per question.
 Each mode was run once per architecture, and no call failed.
@@ -478,7 +478,7 @@ The longer context (775 instead of 296 prompt tokens on average) did not
 measurably hurt RAG.
 Only 2 questions correct at top-5 were judged incorrect at top-15 (none under
 \lem{}): one answer claims two singers released equally many albums, and in
-the other the same answer (``Terry Kath was born first'') to a question with
+the other the same substantive answer (``Terry Kath was born first'') to a question with
 an apparently wrong gold label was accepted for top-5 RAG and the multi-agent
 pipeline but rejected for top-15, an inconsistency of the judge.
 Among answerable questions with every supporting paragraph retrieved, judge
@@ -604,7 +604,7 @@ The single-agent loop retrieves little more than RAG (one retrieval call on
 On the unanswerable items the harness flags abstentions on all 8 for top-5
 RAG and the single-agent loop, 7 for top-15 RAG, and 6 for the multi-agent
 pipeline; the remaining answers also decline (``the context provided does not
-mention \ldots'') without the \texttt{ABSTAIN} token, and the judge counts all
+mention \ldots'') without beginning with the \texttt{ABSTAIN} token, and the judge counts all
 8 as correct for every system.
 
 \section{Discussion and Limitations}
