@@ -1,0 +1,5 @@
+architecture,example_type,n,em,f1,soft_em,contains_gold,soft_f1,abstention_correct,tokens,model_calls,retrieval_calls,latency_ms
+rag,multi_hop,100,0.61,0.1187,0.0,0.61,0.3267,0.95,745.0,1.0,1.0,1086.8
+rag,multi_passage,30,0.9,0.0893,0.0,0.9,0.4623,1.0,714.1,1.0,1.0,1153.19
+rag,single_hop,15,0.7333,0.1012,0.0,0.7333,0.3993,1.0,714.67,1.0,1.0,1473.34
+rag,unanswerable,8,0.0,0.0,0.0,0.0,0.0,0.875,654.62,1.0,1.0,558.46

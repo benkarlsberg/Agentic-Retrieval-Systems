@@ -102,3 +102,25 @@ def test_run_judge_caches_results_and_records_failures(tmp_path):
     cache = json.loads((run / "judge_rag.json").read_text(encoding="utf-8"))
     assert cache["items"]["q1"]["verdict"] is None
     assert "503" in cache["items"]["q1"]["error"]
+
+
+def test_single_architecture_run_is_graded_and_empty_run_rejected(tmp_path):
+    run = tmp_path / "rag_only"
+    run.mkdir()
+    rows = [{"example_id": "q1", "answer": "Jane Doe."}, {"example_id": "q2", "answer": "ABSTAIN."}]
+    (run / "results_rag.json").write_text(json.dumps(rows), encoding="utf-8")
+    calls = []
+
+    def fake(messages):
+        calls.append(messages)
+        return _reply()
+
+    res = judge.run_judge([run], fake, workers=1, examples=EXAMPLES)
+    assert res["total"] == 2 and len(calls) == 2
+    assert (run / "judge_rag.json").exists()
+    assert not (run / "judge_multi_agent.json").exists()
+
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    with pytest.raises(SystemExit):
+        judge.build_jobs([empty], EXAMPLES)

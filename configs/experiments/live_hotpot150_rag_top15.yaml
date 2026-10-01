@@ -1,0 +1,31 @@
+# LIVE LLM control experiment — conventional RAG with top_k=15 on the HotpotQA slice.
+# Identical to live_hotpot150_unconstrained.yaml except: RAG only, top_k 15 (was 5).
+# RAG makes one retrieval and one model call in every comparison mode and does not
+# consult the budget, so its unconstrained and equal_retrieval runs are procedurally
+# identical; a single run serves both modes.
+experiment_id: live_hotpot150_rag_top15
+comparison_mode: unconstrained
+retrieval_mode: bm25
+top_k: 15
+seed: 42
+corpus: fixtures/corpus/hotpot_dev_slice_150.jsonl
+dataset: fixtures/datasets/hotpot_dev_slice_150.jsonl
+architectures:
+  - rag
+model:
+  provider: openai
+  model_name: gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 512
+budget:
+  max_steps: 8
+  max_model_calls: 12
+  max_docs: 20
+  max_tokens: 8000
+  max_retrieval_calls: 5
+  top_k: 15
+tags:
+  - live
+  - gpt-4o-mini
+  - hotpot150
+  - rag-top-k-control

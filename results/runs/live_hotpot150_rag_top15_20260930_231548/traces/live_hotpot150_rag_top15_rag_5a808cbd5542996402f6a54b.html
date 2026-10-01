@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top15_20260930_231548/traces/live_hotpot150_rag_top15_rag_5a808cbd5542996402f6a54b.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;What is the profession of Ansel Elgort&#x27;s character in \&quot;Baby Driver?\&quot;&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What is the profession of Ansel Elgort&#x27;s character in \&quot;Baby Driver?\&quot;&quot;,
+  &quot;top_k&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Lanny Joon::s1&quot;,
+    &quot;Baby Driver::s1&quot;,
+    &quot;CJ Jones::s2&quot;,
+    &quot;Ansel Elgort::s1&quot;,
+    &quot;Baby Driver::s2&quot;,
+    &quot;Ansel Elgort::s0&quot;,
+    &quot;Baby Driver::s0&quot;,
+    &quot;The Divergent Series::s3&quot;,
+    &quot;Baby Driver::s3&quot;,
+    &quot;The War Against the Assholes::s1&quot;,
+    &quot;The Fault in Our Stars (film)::s1&quot;,
+    &quot;The Fault in Our Stars::s4&quot;,
+    &quot;Baby Looney Tunes&#x27; Eggs-traordinary Adventure::s2&quot;,
+    &quot;Carrie (2013 film)::s3&quot;,
+    &quot;Baby Looney Tunes&#x27; Eggs-traordinary Adventure::s3&quot;
+  ],
+  &quot;scores&quot;: [
+    30.23960578569303,
+    27.44199667687766,
+    26.970833157739094,
+    25.135729817449104,
+    21.649121345432256,
+    21.38507537851561,
+    20.916923546811017,
+    18.529311536143204,
+    17.476398362771896,
+    15.627808312867707,
+    14.674000678385728,
+    13.819492576293305,
+    12.615392260242317,
+    11.934109249916002,
+    11.336909563562596
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 2867,
+  &quot;n_docs&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Ansel Elgort&#x27;s character in \&quot;Baby Driver\&quot; is a young getaway driver. This is highlighted in the context where it states that the plot follows Baby, a young getaway driver and music lover who must work for a kingpin (Baby Driver::s2).&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 15,
+    &quot;tokens&quot;: 878,
+    &quot;unique_docs&quot;: 15,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Ansel Elgort&#x27;s character in \&quot;Baby Driver\&quot; is a young getaway driver. This is highlighted in the context where it states that the plot follows Baby, a young getaway driver and music lover who must work for a kingpin (Baby Driver::s2).&quot;
+}</pre></div>
+</body></html>

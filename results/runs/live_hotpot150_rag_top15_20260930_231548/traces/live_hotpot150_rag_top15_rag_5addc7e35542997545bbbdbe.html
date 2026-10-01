@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top15_20260930_231548/traces/live_hotpot150_rag_top15_rag_5addc7e35542997545bbbdbe.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Which areas of the United States were still able to deny sames sex marriages after the case in which Edith \&quot;Edie\&quot; Windsor was the main plaintiff?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;Which areas of the United States were still able to deny sames sex marriages after the case in which Edith \&quot;Edie\&quot; Windsor was the main plaintiff?&quot;,
+  &quot;top_k&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Edith Windsor::s1&quot;,
+    &quot;Gin Chow::s2&quot;,
+    &quot;Capron v. Van Noorden::s0&quot;,
+    &quot;Same-sex marriage in the United States::s1&quot;,
+    &quot;Edith Windsor::s0&quot;,
+    &quot;United States Senate::s0&quot;,
+    &quot;United States House of Representatives::s0&quot;,
+    &quot;East Windsor Hill Historic District::s3&quot;,
+    &quot;Lujan v. G &amp;amp; G Fire Sprinklers, Inc.::s2&quot;,
+    &quot;World Series of Poker Africa::s2&quot;,
+    &quot;Same-sex marriage in the United States::s2&quot;,
+    &quot;Same-sex marriage in the United States::s3&quot;,
+    &quot;6th United States Congress::s5&quot;,
+    &quot;-ly::s2&quot;,
+    &quot;Market share liability::s1&quot;
+  ],
+  &quot;scores&quot;: [
+    49.324119916344095,
+    33.79741642263864,
+    32.074720603785,
+    31.365781698290967,
+    28.23149093934932,
+    27.512682289347005,
+    27.04307220848867,
+    26.357502600038544,
+    24.978441812807088,
+    24.95281105360097,
+    24.51263610863712,
+    24.268541632083526,
+    23.791779626681645,
+    23.76643019622089,
+    23.630905583396434
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 3585,
+  &quot;n_docs&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;The context does not provide specific information about which areas of the United States were still able to deny same-sex marriages after the case in which Edith \&quot;Edie\&quot; Windsor was the main plaintiff. Therefore, I must abstain from answering this question.&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 15,
+    &quot;tokens&quot;: 920,
+    &quot;unique_docs&quot;: 15,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;The context does not provide specific information about which areas of the United States were still able to deny same-sex marriages after the case in which Edith \&quot;Edie\&quot; Windsor was the main plaintiff. Therefore, I must abstain from answering this question.&quot;
+}</pre></div>
+</body></html>

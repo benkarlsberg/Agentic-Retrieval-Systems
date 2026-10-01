@@ -2,9 +2,10 @@
 """Recompute the paper's result tables and figures from the ARS run artifacts.
 
 Inputs (read-only): per-example results_<arch>.json files and JSONL traces of the
-two live gpt-4o-mini HotpotQA-slice runs, the slice dataset (for categories), the cached
-LLM-judge verdicts judge_<arch>.json written by scripts/judge_answers.py, and the manual
-audit judge_audit.csv (unconstrained run). No API calls are made here.
+two live gpt-4o-mini HotpotQA-slice runs and of the two RAG passage-budget control runs
+(top_k 15 and 13, RAG only), the slice dataset (for categories), the cached LLM-judge
+verdicts judge_<arch>.json written by scripts/judge_answers.py, and the manual audit
+judge_audit.csv (unconstrained run). No API calls are made here.
 Outputs: analysis/results.json, analysis/tables.tex and figures/live_*.png.
 
 Usage:
@@ -27,6 +28,13 @@ RUNS = {
     "unconstrained": "results/runs/live_hotpot150_unconstrained_20260915_042424",
     "equal_retrieval": "results/runs/live_hotpot150_equal_retrieval_20260915_071431",
 }
+# RAG passage-budget control: identical to the RAG runs above except top_k. RAG makes one
+# retrieval and one model call in both comparison modes, so one run per k serves both.
+CONTROL_RUNS = {
+    "rag_k15": "results/runs/live_hotpot150_rag_top15_20260930_231548",
+    "rag_k13": "results/runs/live_hotpot150_rag_top13_20260930_231848",
+}
+CONTROL_TOP_K = {"rag_k15": 15, "rag_k13": 13}
 DATASET = "fixtures/datasets/hotpot_dev_slice_150.jsonl"
 CATEGORIES = ["multi_hop", "multi_passage", "single_hop", "unanswerable"]
 # Per-example metric fields taken verbatim from the harness output.
@@ -63,6 +71,17 @@ def trace_retrieved_ids(trace: Path) -> list[str]:
     return list(dict.fromkeys(ids))
 
 
+def trace_model_tokens(trace: Path) -> tuple[int, int]:
+    """Prompt and completion tokens reported by the API, summed over the question's calls."""
+    tin = tout = 0
+    with trace.open(encoding="utf-8") as f:
+        for line in f:
+            ev = json.loads(line)
+            tin += int(ev.get("tokens_in") or 0)
+            tout += int(ev.get("tokens_out") or 0)
+    return tin, tout
+
+
 def load_judge(run_dir: Path, arch: str, ids: list[str]) -> dict[str, float]:
     """Cached LLM-judge verdicts (1.0 correct / 0.0 incorrect); every item must be judged."""
     items = json.loads((run_dir / f"judge_{arch}.json").read_text(encoding="utf-8"))["items"]
@@ -75,10 +94,11 @@ def load_judge(run_dir: Path, arch: str, ids: list[str]) -> dict[str, float]:
     return out
 
 
-def load_run(root: Path, run_rel: str, examples: dict[str, dict]) -> dict[str, list[dict]]:
+def load_run(root: Path, run_rel: str, examples: dict[str, dict],
+             archs: list[str] | None = None) -> dict[str, list[dict]]:
     run_dir = root / run_rel
     out: dict[str, list[dict]] = {}
-    for arch in ARCHS:
+    for arch in archs or ARCHS:
         rows = json.loads((run_dir / f"results_{arch}.json").read_text(encoding="utf-8"))
         judge = load_judge(run_dir, arch, [r["example_id"] for r in rows])
         recs = []
@@ -94,8 +114,11 @@ def load_run(root: Path, run_rel: str, examples: dict[str, dict]) -> dict[str, l
                 got_titles = {g.split("::s")[0] for g in got if g in gold}
                 m["all_support_titles"] = float(titles <= got_titles) if titles else 0.0
                 m["artifact_recall"] = float(r["metrics"].get("recall@k", np.nan))
+            tok_in, tok_out = trace_model_tokens(trace)
             recs.append({
                 "example_id": r["example_id"],
+                "api_prompt_tokens": tok_in,
+                "api_completion_tokens": tok_out,
                 "category": ex["example_type"],
                 "answerable": ex["is_answerable"],
                 "abstained": bool(r["abstained"]),
@@ -208,12 +231,114 @@ def main() -> None:
             [ru["m"]["em"] == re_["m"]["em"] for ru, re_ in zip(u, e)]))
 
     res["judge"] = judge_analysis(root, runs)
+    res["control"] = control_analysis(root, runs, examples)
 
     out = PAPER_DIR / "analysis" / "results.json"
     out.write_text(json.dumps(res, indent=2), encoding="utf-8")
     print(f"wrote {out}")
     make_figures(res)
     write_latex_tables(res)
+
+
+# ------------------------------------------------------- RAG passage-budget control
+
+def control_analysis(root: Path, runs: dict[str, dict[str, list[dict]]],
+                     examples: dict[str, dict]) -> dict:
+    """RAG with top_k 15 / 13 against RAG top-5 and the multi-agent pipeline.
+
+    Uses its own generator (same seed) so that adding the control leaves every other
+    number in results.json unchanged."""
+    rng = np.random.default_rng(SEED)
+    ctrl = {name: load_run(root, rel, examples, archs=["rag"])["rag"]
+            for name, rel in CONTROL_RUNS.items()}
+    out: dict = {"runs": CONTROL_RUNS, "top_k": CONTROL_TOP_K, "systems": {}, "paired": {},
+                 "paired_by_category": {}, "multi_agent_unique_passages": {},
+                 "judge_meta": {}, "run_meta": {}}
+    for name, rel in CONTROL_RUNS.items():
+        out["judge_meta"][name] = json.loads(
+            (root / rel / "judge_rag.json").read_text(encoding="utf-8"))["meta"]
+        out["run_meta"][name] = json.loads((root / rel / "meta.json").read_text(encoding="utf-8"))
+
+    def describe(recs: list[dict]) -> dict:
+        s = summarize(recs, rng)
+        s["judge"] = judge_summary(recs, rng)
+        cm = Counter((int(r["m"]["em"]), int(r["judge"]), r["answerable"]) for r in recs)
+        s["flips"] = {"lenient1_judge0": cm[(1, 0, True)] + cm[(1, 0, False)],
+                      "lenient0_judge1_answerable": cm[(0, 1, True)],
+                      "lenient0_judge1_unanswerable": cm[(0, 1, False)]}
+        pin = np.array([r["api_prompt_tokens"] for r in recs], dtype=float)
+        pout = np.array([r["api_completion_tokens"] for r in recs], dtype=float)
+        s["api_prompt_tokens_mean"] = float(pin.mean())
+        s["api_completion_tokens_mean"] = float(pout.mean())
+        s["api_cost_usd_total_list_price"] = float((pin.sum() * 0.15 + pout.sum() * 0.60) / 1e6)
+        # Judge accuracy on answerable questions split by whether every supporting
+        # paragraph was retrieved: does a longer, noisier context hurt given the evidence?
+        ans = [r for r in recs if r["answerable"]]
+        for flag, key in ((1.0, "with_all_support"), (0.0, "without_all_support")):
+            sel = [r["judge"] for r in ans if r["m"]["all_support_titles"] == flag]
+            s[f"judge_acc_answerable_{key}"] = float(np.mean(sel)) if sel else None
+            s[f"n_answerable_{key}"] = len(sel)
+        return s
+
+    systems = {"rag_k5_unconstrained": runs["unconstrained"]["rag"],
+               "rag_k5_equal_retrieval": runs["equal_retrieval"]["rag"],
+               "multi_agent_unconstrained": runs["unconstrained"]["multi_agent"],
+               "multi_agent_equal_retrieval": runs["equal_retrieval"]["multi_agent"],
+               **ctrl}
+    for name, recs in systems.items():
+        out["systems"][name] = describe(recs)
+
+    def both(a: list[dict], b: list[dict]) -> dict:
+        return {"judge": judge_paired(a, b, rng), "em": paired(a, b, "em", rng),
+                "soft_f1": paired(a, b, "soft_f1", rng)}
+
+    comparisons = []
+    for mode in ("unconstrained", "equal_retrieval"):
+        k5, multi = runs[mode]["rag"], runs[mode]["multi_agent"]
+        comparisons.append((f"multi_agent-rag_k5/{mode}", multi, k5))
+        for name in CONTROL_RUNS:
+            comparisons.append((f"{name}-rag_k5/{mode}", ctrl[name], k5))
+            comparisons.append((f"multi_agent-{name}/{mode}", multi, ctrl[name]))
+    comparisons.append(("rag_k15-rag_k13", ctrl["rag_k15"], ctrl["rag_k13"]))
+    # Run-to-run floor: the two top-5 RAG runs are procedurally identical.
+    comparisons.append(("rag_k5_unconstrained-rag_k5_equal_retrieval",
+                        runs["unconstrained"]["rag"], runs["equal_retrieval"]["rag"]))
+    for key, a, b in comparisons:
+        out["paired"][key] = both(a, b)
+    for mode in ("unconstrained", "equal_retrieval"):
+        k5, multi = runs[mode]["rag"], runs[mode]["multi_agent"]
+        out["paired_by_category"][mode] = {}
+        for c in CATEGORIES:
+            sel = lambda rs: [r for r in rs if r["category"] == c]  # noqa: E731
+            out["paired_by_category"][mode][c] = {
+                "rag_k15-rag_k5": both(sel(ctrl["rag_k15"]), sel(k5)),
+                "multi_agent-rag_k15": both(sel(multi), sel(ctrl["rag_k15"])),
+                "acc": {"rag_k5": float(np.mean([r["judge"] for r in sel(k5)])),
+                        "rag_k15": float(np.mean([r["judge"] for r in sel(ctrl["rag_k15"])])),
+                        "multi_agent": float(np.mean([r["judge"] for r in sel(multi)])),
+                        "n": len(sel(k5))}}
+    # Share of the multi-agent judge gain over RAG top-5 that RAG top-15 recovers,
+    # (k15 - k5) / (multi - k5), with a paired percentile bootstrap over questions.
+    for mode in ("unconstrained", "equal_retrieval"):
+        k5 = np.array([r["judge"] for r in runs[mode]["rag"]])
+        k15 = np.array([r["judge"] for r in ctrl["rag_k15"]])
+        mul = np.array([r["judge"] for r in runs[mode]["multi_agent"]])
+        idx = rng.integers(0, len(k5), size=(N_BOOT, len(k5)))
+        num = (k15[idx] - k5[idx]).mean(axis=1)
+        den = (mul[idx] - k5[idx]).mean(axis=1)
+        ok = den > 0
+        ratio = num[ok] / den[ok]
+        out.setdefault("share_of_multi_gain_recovered_by_k15", {})[mode] = {
+            "point": float((k15 - k5).mean() / (mul - k5).mean()),
+            "ci95": (float(np.quantile(ratio, 0.025)), float(np.quantile(ratio, 0.975))),
+            "n_boot_valid": int(ok.sum())}
+    for mode in ("unconstrained", "equal_retrieval"):
+        u = np.array([r["m"]["unique_docs"] for r in runs[mode]["multi_agent"]])
+        out["multi_agent_unique_passages"][mode] = {
+            "mean": float(u.mean()), "median": float(np.median(u)),
+            "min": int(u.min()), "max": int(u.max()),
+            "hist": {str(int(k)): int(v) for k, v in sorted(Counter(u.tolist()).items())}}
+    return out
 
 
 # ------------------------------------------------------------------ LLM judge
@@ -369,9 +494,20 @@ def signed(x: float) -> str:
     return ("$+$" if x >= 0 else "$-$") + f"{abs(x):.3f}"
 
 
+CTRL_LABEL = {"rag_k15": "RAG, top-15", "rag_k13": "RAG, top-13"}
+CTRL_HEAD = "Passage-budget control (RAG only; same run for both modes)"
+
+
+def delta_cell(d: dict) -> str:
+    lo, hi = d["ci95"]
+    return (f"{signed(d['mean_diff'])} {{\\scriptsize[{signed(lo)}, {signed(hi)}]}} "
+            f"({d['a_only_correct']}/{d['b_only_correct']})")
+
+
 def write_latex_tables(res: dict) -> None:
     """Emit LaTeX table bodies (pasted verbatim into main.tex)."""
     mode_name = {"unconstrained": "Unconstrained", "equal_retrieval": "Equal-retrieval"}
+    C = res["control"]
     out = []
     out.append("% ---- quality ----")
     for mode in ("unconstrained", "equal_retrieval"):
@@ -382,6 +518,12 @@ def write_latex_tables(res: dict) -> None:
                        f"{ci(s, 'soft_f1')} & {f3(s['f1'])} \\\\")
         if mode == "unconstrained":
             out.append("\\midrule")
+    out.append("\\midrule")
+    out.append(f"\\multicolumn{{5}}{{l}}{{\\emph{{{CTRL_HEAD}}}}} \\\\")
+    for name in CONTROL_RUNS:
+        s = C["systems"][name]
+        out.append(f"\\quad {CTRL_LABEL[name]} & {ci(s, 'em')} & {ci(s, 'contains_gold')} & "
+                   f"{ci(s, 'soft_f1')} & {f3(s['f1'])} \\\\")
     out.append("% ---- cost ----")
     for mode in ("unconstrained", "equal_retrieval"):
         out.append(f"\\multicolumn{{7}}{{l}}{{\\emph{{{mode_name[mode]}}}}} \\\\")
@@ -394,8 +536,17 @@ def write_latex_tables(res: dict) -> None:
                 f"{s['cost_usd_total']:.3f} \\\\")
         if mode == "unconstrained":
             out.append("\\midrule")
+    out.append("\\midrule")
+    out.append(f"\\multicolumn{{7}}{{l}}{{\\emph{{{CTRL_HEAD}}}}} \\\\")
+    for name in CONTROL_RUNS:
+        s = C["systems"][name]
+        out.append(
+            f"\\quad {CTRL_LABEL[name]} & {s['model_calls']:.2f} & {s['retrieval_calls']:.2f} & "
+            f"{s['unique_docs']:.1f} & {s['tokens']:.0f} & "
+            f"{s['latency_ms'] / 1000:.2f} / {s['latency_s_median']:.2f} & "
+            f"{s['cost_usd_total']:.3f} \\\\")
     out.append("% ---- category (unconstrained) ----")
-    cat_label = {"multi_hop": "Multi-hop", "multi_passage": "Multi-passage", "single_hop": "Single-hop"}
+    cat_label = {"multi_hop": "Multi-hop", "multi_passage": "Multi-passage", "single_hop": "Short-context"}
     for c in ("multi_hop", "multi_passage", "single_hop"):
         row = [f"{cat_label[c]} ({res['by_category']['unconstrained']['rag'][c]['n']})"]
         for a in ARCHS:
@@ -411,6 +562,13 @@ def write_latex_tables(res: dict) -> None:
         s = res["overall"]["unconstrained"][a]
         out.append(
             f"{ARCH_LABEL[a]} & {s['evidence_recall']:.3f} & {s['all_support_titles']:.3f} & "
+            f"{s['n_abstain_answerable']}/{s['n_answerable']} & "
+            f"{s['n_abstain_unanswerable']}/{s['n_unanswerable']} & "
+            f"{s['mean_answer_words_non_abstained']:.1f} \\\\")
+    for name in CONTROL_RUNS:
+        s = C["systems"][name]
+        out.append(
+            f"{CTRL_LABEL[name]} & {s['evidence_recall']:.3f} & {s['all_support_titles']:.3f} & "
             f"{s['n_abstain_answerable']}/{s['n_answerable']} & "
             f"{s['n_abstain_unanswerable']}/{s['n_unanswerable']} & "
             f"{s['mean_answer_words_non_abstained']:.1f} \\\\")
@@ -436,6 +594,18 @@ def write_latex_tables(res: dict) -> None:
                 f"{cm['lenient0_judge1_unanswerable']} \\\\")
         if mode == "unconstrained":
             out.append("\\midrule")
+    out.append("\\midrule")
+    out.append(f"\\multicolumn{{5}}{{l}}{{\\emph{{{CTRL_HEAD}; $\\Delta$ vs.\\ unconstrained RAG}}}} \\\\")
+    for name in CONTROL_RUNS:
+        s = C["systems"][name]
+        lo, hi = s["judge"]["acc_ci95"]
+        d = C["paired"][f"{name}-rag_k5/unconstrained"]["judge"]
+        fl = s["flips"]
+        out.append(
+            f"\\quad {CTRL_LABEL[name]} & {f3(s['em'])} & "
+            f"{s['judge']['acc']:.3f} {{\\scriptsize[{lo:.3f}, {hi:.3f}]}} & {delta_cell(d)} & "
+            f"{fl['lenient1_judge0']} / {fl['lenient0_judge1_answerable']} + "
+            f"{fl['lenient0_judge1_unanswerable']} \\\\")
     out.append("% ---- LLM judge by category (unconstrained) ----")
     cat_label_j = dict(cat_label, unanswerable="Unanswerable")
     for c in CATEGORIES:
@@ -448,6 +618,26 @@ def write_latex_tables(res: dict) -> None:
             row.append(f"{signed(d['mean_diff'])} {{\\scriptsize[{signed(lo)}, {signed(hi)}]}} "
                        f"({d['a_only_correct']}/{d['b_only_correct']})")
         out.append(" & ".join(row) + " \\\\")
+    out.append("% ---- passage-budget control: judge by stratum (unconstrained) ----")
+    pc = C["paired_by_category"]["unconstrained"]
+    k5s, k15s = C["systems"]["rag_k5_unconstrained"], C["systems"]["rag_k15"]
+    mas = C["systems"]["multi_agent_unconstrained"]
+    out.append(
+        f"All (153) & {f3(k5s['judge']['acc'])} & {f3(k15s['judge']['acc'])} & "
+        f"{f3(mas['judge']['acc'])} & "
+        f"{delta_cell(C['paired']['rag_k15-rag_k5/unconstrained']['judge'])} & "
+        f"{delta_cell(C['paired']['multi_agent-rag_k15/unconstrained']['judge'])} \\\\")
+    for c in CATEGORIES:
+        a = pc[c]["acc"]
+        out.append(
+            f"{cat_label_j[c]} ({a['n']}) & {f3(a['rag_k5'])} & {f3(a['rag_k15'])} & "
+            f"{f3(a['multi_agent'])} & {delta_cell(pc[c]['rag_k15-rag_k5']['judge'])} & "
+            f"{delta_cell(pc[c]['multi_agent-rag_k15']['judge'])} \\\\")
+    out.append("\\midrule")
+    out.append(
+        f"All, \\lem{{}} (153) & {f3(k5s['em'])} & {f3(k15s['em'])} & {f3(mas['em'])} & "
+        f"{delta_cell(C['paired']['rag_k15-rag_k5/unconstrained']['em'])} & "
+        f"{delta_cell(C['paired']['multi_agent-rag_k15/unconstrained']['em'])} \\\\")
     (PAPER_DIR / "analysis" / "tables.tex").write_text("\n".join(out) + "\n", encoding="utf-8")
     print("wrote analysis/tables.tex")
 
@@ -468,11 +658,17 @@ def make_figures(res: dict) -> None:
     mode_label = {"unconstrained": "unconstrained", "equal_retrieval": "equal-retrieval"}
     figdir = PAPER_DIR / "figures"
 
-    # Figure 1: quality vs. mean tokens per question (both modes).
+    # Figure 1: quality vs. mean tokens per question (both modes), plus the RAG top-15
+    # control, which is the same run for both modes and enters both frontiers.
+    k15 = res["control"]["systems"]["rag_k15"]
     fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.7))
     for ax, key, ylab in [(axes[0], "em", "Lenient EM"), (axes[1], "soft_f1", "Soft F1")]:
+        lo, hi = k15[key + "_ci95"]
+        ax.errorbar(k15["tokens"], k15[key], yerr=[[k15[key] - lo], [hi - k15[key]]],
+                    fmt="D", color=colors["rag"], ms=5, capsize=2, lw=0.8,
+                    mfc="#A9C1E3", mew=1.0)
         for mode in ("unconstrained", "equal_retrieval"):
-            pts = []
+            pts = [(k15["tokens"], k15[key])]
             for a in ARCHS:
                 s = res["overall"][mode][a]
                 lo, hi = s[key + "_ci95"]
@@ -502,15 +698,17 @@ def make_figures(res: dict) -> None:
     handles += [Line2D([], [], marker=markers[m], ls="-" if m == "unconstrained" else "--",
                        color="0.4", mfc="0.4" if m == "unconstrained" else "white",
                        label=mode_label[m]) for m in markers]
-    fig.legend(handles=handles, loc="upper center", ncol=5, frameon=False,
-               bbox_to_anchor=(0.5, 1.03))
+    handles.insert(3, Line2D([], [], marker="D", ls="", color=colors["rag"], mfc="#A9C1E3",
+                             label="RAG, top-15"))
+    fig.legend(handles=handles, loc="upper center", ncol=6, frameon=False,
+               bbox_to_anchor=(0.5, 1.03), columnspacing=1.0, handletextpad=0.4)
     fig.tight_layout(rect=(0, 0, 1, 0.92))
     fig.savefig(figdir / "live_pareto_tokens.png")
     plt.close(fig)
 
     # Figure 2: per-category lenient EM by architecture (unconstrained).
     cats = ["multi_hop", "multi_passage", "single_hop"]
-    cat_label = {"multi_hop": "multi-hop", "multi_passage": "multi-passage", "single_hop": "single-hop"}
+    cat_label = {"multi_hop": "multi-hop", "multi_passage": "multi-passage", "single_hop": "short-context"}
     fig, ax = plt.subplots(figsize=(5.2, 2.6))
     w = 0.26
     xs = np.arange(len(cats))

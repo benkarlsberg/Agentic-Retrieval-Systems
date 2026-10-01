@@ -14,6 +14,7 @@ the API for missing or failed items.
 Usage (needs OPENAI_API_KEY and the openai package; see pyproject extra "openai"):
   python scripts/judge_answers.py                  # both live HotpotQA runs
   python scripts/judge_answers.py --dry-run        # report what would be sent
+  python scripts/judge_answers.py --runs results/runs/<rag_top_k_run>   # control runs
   python scripts/judge_answers.py audit-sample     # draw the manual-audit sample
 """
 
@@ -181,9 +182,15 @@ def gold_list(ex: dict) -> list[str] | None:
 
 
 def build_jobs(run_dirs: list[Path], examples: dict[str, dict]) -> list[dict]:
+    """One job per (run, architecture, example). Architectures without a results file in a
+    run directory are skipped, so single-architecture runs (e.g. the RAG top-k control)
+    can be graded; a run directory with no results file at all is an error."""
     jobs = []
     for run_dir in run_dirs:
-        for arch in ARCHS:
+        present = [a for a in ARCHS if (run_dir / f"results_{a}.json").exists()]
+        if not present:
+            raise SystemExit(f"{run_dir}: no results_<arch>.json files")
+        for arch in present:
             rows = json.loads((run_dir / f"results_{arch}.json").read_text(encoding="utf-8"))
             for r in rows:
                 ex = examples[r["example_id"]]

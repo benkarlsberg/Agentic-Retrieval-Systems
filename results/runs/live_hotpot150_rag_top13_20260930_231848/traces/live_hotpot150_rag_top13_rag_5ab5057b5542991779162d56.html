@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top13_20260930_231848/traces/live_hotpot150_rag_top13_rag_5ab5057b5542991779162d56.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;What type of movie are Wishing Stairs and Voice?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;What type of movie are Wishing Stairs and Voice?&quot;,
+  &quot;top_k&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Wishing Stairs::s0&quot;,
+    &quot;Voice type::s2&quot;,
+    &quot;Voice type::s1&quot;,
+    &quot;Voice type::s0&quot;,
+    &quot;Voice type::s5&quot;,
+    &quot;Voice type::s3&quot;,
+    &quot;What Happens Next? (film)::s4&quot;,
+    &quot;Voice type::s4&quot;,
+    &quot;Song Ji-hyo::s1&quot;,
+    &quot;Callington Mill::s5&quot;,
+    &quot;Wishing Stairs::s1&quot;,
+    &quot;Ninnu Kori::s3&quot;,
+    &quot;Voice (film)::s0&quot;
+  ],
+  &quot;scores&quot;: [
+    22.711554890645807,
+    20.12266410513066,
+    19.590428378361523,
+    17.633834951527735,
+    17.290810187813264,
+    15.767101386219263,
+    15.705731970755796,
+    15.113712206743088,
+    14.154888522066274,
+    13.112888902031735,
+    13.042225956983664,
+    12.606393996410063,
+    11.841599841989197
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 2403,
+  &quot;n_docs&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Both \&quot;Wishing Stairs\&quot; and \&quot;Voice\&quot; are South Korean horror films. \&quot;Wishing Stairs\&quot; is the third installment of the \&quot;Whispering Corridors\&quot; film series, released in 2003, while \&quot;Voice\&quot; is the fourth installment, released in 2005 (Wishing Stairs::s0, Voice (film)::s0).&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 13,
+    &quot;tokens&quot;: 696,
+    &quot;unique_docs&quot;: 13,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Both \&quot;Wishing Stairs\&quot; and \&quot;Voice\&quot; are South Korean horror films. \&quot;Wishing Stairs\&quot; is the third installment of the \&quot;Whispering Corridors\&quot; film series, released in 2003, while \&quot;Voice\&quot; is the fourth installment, released in 2005 (Wishing Stairs::s0, Voice (film)::s0).&quot;
+}</pre></div>
+</body></html>

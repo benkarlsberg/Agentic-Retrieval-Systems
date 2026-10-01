@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top13_20260930_231848/traces/live_hotpot150_rag_top13_rag_5a75d35d5542992d0ec05ffe.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Which pizza shop opened first, Toppers Pizza or America&#x27;s Incredible Pizza Company?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;Which pizza shop opened first, Toppers Pizza or America&#x27;s Incredible Pizza Company?&quot;,
+  &quot;top_k&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;America&#x27;s Incredible Pizza Company::s2&quot;,
+    &quot;America&#x27;s Incredible Pizza Company::s0&quot;,
+    &quot;America&#x27;s Incredible Pizza Company::s1&quot;,
+    &quot;Toppers Pizza (American restaurant)::s2&quot;,
+    &quot;Topper&#x27;s Pizza::s0&quot;,
+    &quot;America&#x27;s Incredible Pizza Company::s3&quot;,
+    &quot;John&#x27;s Incredible Pizza Company::s0&quot;,
+    &quot;Toppers Pizza (American restaurant)::s0&quot;,
+    &quot;Toppers Pizza (American restaurant)::s4&quot;,
+    &quot;Toppers Pizza (American restaurant)::s3&quot;,
+    &quot;John&#x27;s Incredible Pizza Company::s1&quot;,
+    &quot;Domino&#x27;s Pizza Enterprises::s3&quot;,
+    &quot;John&#x27;s Incredible Pizza Company::s2&quot;
+  ],
+  &quot;scores&quot;: [
+    49.46674848814235,
+    47.28949789089707,
+    45.604644845984346,
+    44.10396031420458,
+    42.95989960652591,
+    37.10611738099011,
+    36.5930432446815,
+    35.30099597263826,
+    35.02980150472089,
+    33.97216099992377,
+    33.37650330156978,
+    32.88761934072195,
+    32.43934589125525
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 1999,
+  &quot;n_docs&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Toppers Pizza opened first in 1993 in Whitewater, Wisconsin (Toppers Pizza (American restaurant)::s2). In contrast, America&#x27;s Incredible Pizza Company opened its first restaurant in 2002 in Springfield, Missouri (America&#x27;s Incredible Pizza Company::s2). Therefore, Toppers Pizza is the first to open.&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 13,
+    &quot;tokens&quot;: 556,
+    &quot;unique_docs&quot;: 13,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Toppers Pizza opened first in 1993 in Whitewater, Wisconsin (Toppers Pizza (American restaurant)::s2). In contrast, America&#x27;s Incredible Pizza Company opened its first restaurant in 2002 in Springfield, Missouri (America&#x27;s Incredible Pizza Company::s2). Therefore, Toppers Pizza is the first to open.&quot;
+}</pre></div>
+</body></html>

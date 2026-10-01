@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top15_20260930_231548/traces/live_hotpot150_rag_top15_rag_5adc2e3d554299438c868d6b.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Jes\u00fas Dautt is a Mexican professional footballer who is on loan from a club founded on what date?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;Jes\u00fas Dautt is a Mexican professional footballer who is on loan from a club founded on what date?&quot;,
+  &quot;top_k&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Jes\u00fas Dautt::s0&quot;,
+    &quot;Jes\u00fas Urbina::s0&quot;,
+    &quot;Edgar Alaffita::s0&quot;,
+    &quot;Jes\u00fas Due\u00f1as::s0&quot;,
+    &quot;Jes\u00fas Manuel Corona::s0&quot;,
+    &quot;Jos\u00e9 de Jes\u00fas God\u00ednez::s0&quot;,
+    &quot;Enrique Cedillo::s0&quot;,
+    &quot;Jes\u00fas Veyna::s0&quot;,
+    &quot;Giannelli Imbula::s0&quot;,
+    &quot;Alan Puga::s0&quot;,
+    &quot;Danilo Su\u00e1rez::s0&quot;,
+    &quot;Jonathan Urretaviscaya::s0&quot;,
+    &quot;Christian Serr\u00f3n::s0&quot;,
+    &quot;Eddy Lecygne::s0&quot;,
+    &quot;Josh Tymon::s0&quot;
+  ],
+  &quot;scores&quot;: [
+    59.292369538614764,
+    41.896353178213715,
+    39.119192499789506,
+    33.624911349829944,
+    33.062652070773815,
+    32.597887401679706,
+    31.67930834967888,
+    30.17962013582751,
+    29.367487050187037,
+    28.41478819329467,
+    24.25944291600286,
+    22.743267528501224,
+    22.682314725421286,
+    20.57852798149127,
+    19.803063968051298
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 3130,
+  &quot;n_docs&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Jes\u00fas Dautt is on loan from Monterrey, but the context does not provide the founding date of Monterrey. Therefore, I must ABSTAIN from answering the question.&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 15,
+    &quot;tokens&quot;: 957,
+    &quot;unique_docs&quot;: 15,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Jes\u00fas Dautt is on loan from Monterrey, but the context does not provide the founding date of Monterrey. Therefore, I must ABSTAIN from answering the question.&quot;
+}</pre></div>
+</body></html>

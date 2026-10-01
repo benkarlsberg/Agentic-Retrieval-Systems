@@ -27,7 +27,8 @@ Requires TeX Live (or similar) with `pdflatex` and `bibtex`.
 Primary category suggestion: `cs.IR` (cross-list `cs.CL`, `cs.AI`).
 
 The empirical section reports live `gpt-4o-mini` runs on a 153-question HotpotQA distractor dev slice
-(`results/runs/live_hotpot150_*`) under unconstrained and equal-retrieval budgets.
+(`results/runs/live_hotpot150_*`) under unconstrained and equal-retrieval budgets, plus a passage-budget control
+that re-runs RAG with `top_k` 15 and 13 (`results/runs/live_hotpot150_rag_top{15,13}_*`).
 Recompute the tables and figures from the run artifacts in this repository with `make analysis` (needs numpy and matplotlib).
 The LLM-judge numbers are read from the cached `judge_<arch>.json` files and the audit file in the run directories,
 so `make analysis` makes no API calls; `python scripts/judge_answers.py` (from the repository root) regenerates the

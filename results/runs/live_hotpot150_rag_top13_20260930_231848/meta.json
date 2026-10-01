@@ -1,0 +1,17 @@
+{
+  "experiment_id": "live_hotpot150_rag_top13",
+  "comparison_mode": "unconstrained",
+  "fixture_offline": false,
+  "model_provider": "openai",
+  "model_name": "gpt-4o-mini",
+  "n_examples": 153,
+  "architectures": [
+    "rag"
+  ],
+  "output_dir": "/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top13_20260930_231848",
+  "config_path": "/workspace/Agentic-Retrieval-Systems/configs/experiments/live_hotpot150_rag_top13.yaml",
+  "note": "Live run with openai/gpt-4o-mini on fixture corpus/dataset.",
+  "response_models": [
+    "gpt-4o-mini-2024-07-18"
+  ]
+}

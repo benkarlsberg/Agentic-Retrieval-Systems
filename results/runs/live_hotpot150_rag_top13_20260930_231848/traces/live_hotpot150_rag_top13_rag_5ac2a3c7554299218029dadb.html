@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top13_20260930_231848/traces/live_hotpot150_rag_top13_rag_5ac2a3c7554299218029dadb.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Which genus has more species in it, Othonna or Stangeria?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;Which genus has more species in it, Othonna or Stangeria?&quot;,
+  &quot;top_k&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Stangeria::s0&quot;,
+    &quot;Othonna capensis::s0&quot;,
+    &quot;Othonna::s0&quot;,
+    &quot;Huernia::s1&quot;,
+    &quot;Heliotropium::s1&quot;,
+    &quot;Stangeriaceae::s1&quot;,
+    &quot;Typhonodorum::s1&quot;,
+    &quot;Casuarinaceae::s1&quot;,
+    &quot;Ruzhou::s2&quot;,
+    &quot;Coronilla::s0&quot;,
+    &quot;Stangeria::s2&quot;,
+    &quot;Typhonodorum::s4&quot;,
+    &quot;Ehretia::s1&quot;
+  ],
+  &quot;scores&quot;: [
+    27.063319472829964,
+    23.059342547478217,
+    20.215048224013092,
+    15.750252818953548,
+    15.655595926734296,
+    15.215319021240333,
+    13.984054450572053,
+    13.817018092926029,
+    13.214139996519947,
+    12.226778147943815,
+    12.04946284614087,
+    11.753991466777586,
+    10.839540932147703
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 2057,
+  &quot;n_docs&quot;: 13
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;The genus Othonna has more species in it compared to Stangeria. Othonna is a genus of African plants in the sunflower family, while Stangeria is represented by only one species, Stangeria eriopus, which is the sole species in that genus (Stangeria::s0). Therefore, Othonna has more species than Stangeria.&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 13,
+    &quot;tokens&quot;: 672,
+    &quot;unique_docs&quot;: 13,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;The genus Othonna has more species in it compared to Stangeria. Othonna is a genus of African plants in the sunflower family, while Stangeria is represented by only one species, Stangeria eriopus, which is the sole species in that genus (Stangeria::s0). Therefore, Othonna has more species than Stangeria.&quot;
+}</pre></div>
+</body></html>

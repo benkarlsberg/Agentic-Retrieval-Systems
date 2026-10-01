@@ -1,0 +1,62 @@
+[
+  {
+    "architecture": "rag",
+    "example_type": "multi_hop",
+    "n": 100,
+    "em": 0.61,
+    "f1": 0.1193,
+    "soft_em": 0.0,
+    "contains_gold": 0.61,
+    "soft_f1": 0.324,
+    "abstention_correct": 0.96,
+    "tokens": 841.15,
+    "model_calls": 1.0,
+    "retrieval_calls": 1.0,
+    "latency_ms": 1083.65
+  },
+  {
+    "architecture": "rag",
+    "example_type": "multi_passage",
+    "n": 30,
+    "em": 0.8667,
+    "f1": 0.092,
+    "soft_em": 0.0,
+    "contains_gold": 0.8667,
+    "soft_f1": 0.4458,
+    "abstention_correct": 0.9667,
+    "tokens": 806.6,
+    "model_calls": 1.0,
+    "retrieval_calls": 1.0,
+    "latency_ms": 1224.62
+  },
+  {
+    "architecture": "rag",
+    "example_type": "single_hop",
+    "n": 15,
+    "em": 0.7333,
+    "f1": 0.1031,
+    "soft_em": 0.0,
+    "contains_gold": 0.7333,
+    "soft_f1": 0.3997,
+    "abstention_correct": 1.0,
+    "tokens": 811.87,
+    "model_calls": 1.0,
+    "retrieval_calls": 1.0,
+    "latency_ms": 1130.66
+  },
+  {
+    "architecture": "rag",
+    "example_type": "unanswerable",
+    "n": 8,
+    "em": 0.0,
+    "f1": 0.0,
+    "soft_em": 0.0,
+    "contains_gold": 0.0,
+    "soft_f1": 0.0,
+    "abstention_correct": 0.875,
+    "tokens": 736.62,
+    "model_calls": 1.0,
+    "retrieval_calls": 1.0,
+    "latency_ms": 637.45
+  }
+]

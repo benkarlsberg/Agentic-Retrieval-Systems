@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ARS Trace Viewer</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #0f1115; color: #e6e6e6; }
+h1 { font-size: 1.2rem; }
+.meta { color: #9aa; margin-bottom: 1rem; }
+.event { border: 1px solid #333; border-radius: 8px; padding: 0.75rem; margin: 0.5rem 0; background: #171a21; }
+.etype { color: #7cb7ff; font-weight: 600; }
+.role { color: #f0a; }
+pre { white-space: pre-wrap; word-break: break-word; font-size: 0.85rem; }
+</style></head><body>
+<h1>ARS Trace Viewer</h1>
+<div class="meta">Offline / fixture traces — not live production logs.</div>
+<div class="meta">file=/workspace/Agentic-Retrieval-Systems/results/runs/live_hotpot150_rag_top15_20260930_231548/traces/live_hotpot150_rag_top15_rag_5a81d54a55429903bc27b9d4.jsonl events=7</div>
+<div class="event"><div><span class="etype">run_start</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;question&quot;: &quot;Were Jeff Martin and Kyle Patrick both in The Click Five?&quot;,
+  &quot;architecture&quot;: &quot;rag&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_query</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;query&quot;: &quot;Were Jeff Martin and Kyle Patrick both in The Click Five?&quot;,
+  &quot;top_k&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">retrieval_result</span> step=0 <span class="role">retriever</span></div><pre>{
+  &quot;doc_ids&quot;: [
+    &quot;Kyle Patrick::s0&quot;,
+    &quot;The Click Five::s5&quot;,
+    &quot;Kyle Patrick (EP)::s0&quot;,
+    &quot;Kyle Patrick::s1&quot;,
+    &quot;Jeff Martin 777::s1&quot;,
+    &quot;Jeff Martin 777::s0&quot;,
+    &quot;Flipside (The Click Five song)::s0&quot;,
+    &quot;The Click Five::s0&quot;,
+    &quot;Jeff Martin 777::s2&quot;,
+    &quot;Jeff Martin 777::s3&quot;,
+    &quot;The Click Five::s3&quot;,
+    &quot;Voodoo Highway::s2&quot;,
+    &quot;Jeff Martin (Canadian musician)::s0&quot;,
+    &quot;Jeff Martin (Canadian musician)::s1&quot;,
+    &quot;Kyle Patrick (EP)::s1&quot;
+  ],
+  &quot;scores&quot;: [
+    28.21277621211912,
+    26.13776609882045,
+    25.55417233862172,
+    20.509007479203124,
+    20.45380131571925,
+    19.55299824619089,
+    19.2500347963486,
+    18.97931977800573,
+    18.5364859965837,
+    18.27618660054784,
+    18.09829430415162,
+    18.02664723785445,
+    17.334518586488493,
+    16.977109086994147,
+    16.79418673957687
+  ]
+}</pre></div>
+<div class="event"><div><span class="etype">context_update</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;context_chars&quot;: 2397,
+  &quot;n_docs&quot;: 15
+}</pre></div>
+<div class="event"><div><span class="etype">answer</span> step=0 <span class="role">synthesizer</span></div><pre>{
+  &quot;answer&quot;: &quot;Yes, Kyle Patrick was in The Click Five as the lead singer after Eric Dill left the group. However, there is no mention of Jeff Martin being a member of The Click Five in the provided context. Therefore, while Kyle Patrick was in The Click Five, it is unclear if Jeff Martin was associated with the band.&quot;,
+  &quot;citations&quot;: [],
+  &quot;response_model&quot;: &quot;gpt-4o-mini-2024-07-18&quot;
+}</pre></div>
+<div class="event"><div><span class="etype">termination</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;stop_reason&quot;: &quot;completed&quot;,
+  &quot;budget&quot;: {
+    &quot;steps&quot;: 1,
+    &quot;model_calls&quot;: 1,
+    &quot;retrieval_calls&quot;: 1,
+    &quot;docs&quot;: 15,
+    &quot;tokens&quot;: 736,
+    &quot;unique_docs&quot;: 15,
+    &quot;duplicate_docs&quot;: 0
+  }
+}</pre></div>
+<div class="event"><div><span class="etype">run_end</span> step=0 <span class="role">None</span></div><pre>{
+  &quot;answer&quot;: &quot;Yes, Kyle Patrick was in The Click Five as the lead singer after Eric Dill left the group. However, there is no mention of Jeff Martin being a member of The Click Five in the provided context. Therefore, while Kyle Patrick was in The Click Five, it is unclear if Jeff Martin was associated with the band.&quot;
+}</pre></div>
+</body></html>

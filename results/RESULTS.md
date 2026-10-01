@@ -76,6 +76,46 @@ Equal retrieval: +0.163 [+0.105, +0.229] (27 vs. 2) and −0.020 [−0.085, +0.0
 Audit of 60 sampled unconstrained judgments (30 judge/lenient disagreements, 30 agreements;
 `judge_audit.csv`): judge agrees on 54/60 (Cohen's kappa 0.78), lenient EM on 36/60 (kappa 0.23).
 
+### Passage-budget control (RAG top_k 15 and 13)
+
+Sources: `results/runs/live_hotpot150_rag_top15_20260930_231548`,
+`results/runs/live_hotpot150_rag_top13_20260930_231848` (configs `live_hotpot150_rag_top{15,13}.yaml`).
+The multi-agent pipeline read 13.1 unique passages per question (unconstrained: median 14, range 10-15, 15 on
+47 of 153 questions; equal retrieval: mean 13.1, median 13) against RAG's 5.0. These runs repeat RAG on the same
+153 questions with the same corpus, retriever, prompt, and model, changing only `top_k`. RAG does not consult
+retrieval-call or document caps, so its unconstrained and equal-retrieval runs are procedurally identical (the two
+top-5 runs retrieve identical passages for all 153 questions) and one run per `top_k` serves both modes. Served
+model: `gpt-4o-mini-2024-07-18` (recorded in `meta.json`); judge prompt `judge-v2`, 306 judgments, 0 failures.
+
+| System | Lenient EM [95% CI] | Judge [95% CI] | Tokens | Latency mean / median (s) | Est. cost (USD, 153 q) | Evidence recall | All support |
+|--------|---------------------|----------------|-------:|---------------------------|-----------------------:|----------------:|------------:|
+| rag, top_k=5 (unconstrained) | 0.510 [0.431, 0.588] | 0.601 [0.523, 0.680] | 336 | 0.81 / 0.77 | 0.019 | 0.366 | 0.483 |
+| rag, top_k=13 | 0.647 [0.569, 0.725] | 0.752 [0.680, 0.817] | 731 | 1.11 / 1.01 | 0.042 | 0.591 | 0.766 |
+| rag, top_k=15 | 0.641 [0.562, 0.719] | 0.752 [0.680, 0.817] | 826 | 1.09 / 1.00 | 0.047 | 0.618 | 0.786 |
+| multi_agent (unconstrained) | 0.621 [0.542, 0.699] | 0.765 [0.699, 0.830] | 2,744 | 43.16 / 41.72 | 0.157 | 0.641 | 0.766 |
+
+(CIs in this table come from the control section of `results.json`, which uses its own bootstrap stream, so the
+multi-agent intervals can differ in the third decimal from the tables above.)
+
+Paired differences (judge / lenient EM; discordant counts in parentheses):
+
+| Comparison | Judge | Lenient EM |
+|------------|-------|------------|
+| rag k15 − rag k5 (unconstrained) | +0.150 [+0.092, +0.216] (25/2) | +0.131 [+0.078, +0.190] (20/0) |
+| multi − rag k15 (unconstrained) | +0.013 [−0.033, +0.059] (8/6) | −0.020 [−0.059, +0.020] (3/6) |
+| multi − rag k15 (equal retrieval) | +0.013 [−0.033, +0.059] (8/6) | −0.020 [−0.059, +0.020] (3/6) |
+| rag k13 − rag k5 (unconstrained) | +0.150 [+0.092, +0.216] (25/2) | +0.137 [+0.085, +0.196] (21/0) |
+| multi − rag k13 (unconstrained) | +0.013 [−0.026, +0.052] (6/4) | −0.026 [−0.065, +0.007] (2/6) |
+| rag k5 unconstrained − rag k5 equal retrieval (identical runs) | +0.000 [−0.020, +0.020] (1/1) | +0.007 [+0.000, +0.020] (1/0) |
+
+By stratum (judge, unconstrained), rag k15 − rag k5 / multi − rag k15: multi-hop +0.190 (19/0) / −0.020 (3/5);
+multi-passage +0.133 (6/2) / +0.100 [−0.033, +0.233] (4/1); short-context 0 / +0.067 (1/0); unanswerable 0 / 0.
+Top-15 RAG recovers a share of 0.92 (paired bootstrap 95% CI 0.67–1.26) of the multi-agent judge gain over top-5
+RAG. A longer context did not measurably hurt: 2 questions went from correct to incorrect (0 under lenient EM), and
+judge accuracy on answerable questions whose supporting paragraphs were all retrieved is 0.843 (top-5, n=70) vs.
+0.842 (top-15, n=114). The harness `recall@k` field is valid for RAG at every `top_k` (it equals the trace-based
+evidence recall); only the single-agent value is wrong (1.0 instead of 0.383).
+
 A smaller live check on the 13-question fixture set is in
 `results/runs/live_gpt4o_mini_compare_20260915_035757` (all three architectures at 0.692 lenient EM).
 
@@ -87,8 +127,9 @@ A smaller live check on the 13-question fixture set is in
 
 ## Next experiments
 
-1. Additional models and a larger HotpotQA sample.
-2. Constrained short-answer output so strict EM and token F1 are informative.
-3. Run ablations in `configs/ablations/`.
+1. Passage-budget-matched baselines by default (done for RAG top_k 15/13; see above) and the equal-token mode.
+2. Additional models and a larger HotpotQA sample.
+3. Constrained short-answer output so strict EM and token F1 are informative.
+4. Run ablations in `configs/ablations/`.
 
 See [`papers/arxiv/`](../papers/arxiv/) for the full analysis.
